@@ -178,6 +178,43 @@ footer{text-align:center;padding:20px;font-size:7px;color:var(--brown-mid);backg
 .run-window-box{background:var(--mint-pale);border:2px solid var(--mint-dark);padding:12px 14px;margin-top:12px;box-shadow:var(--shadow-sm)}
 .run-window-title{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--brown-light);margin-bottom:8px}
 .run-window-text{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:1.8}
+/* ── MEAL PREP ── */
+.meal-timeline{background:var(--yellow-pale);border:2px solid var(--border);padding:12px 16px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.meal-timeline-title{font-family:'Press Start 2P';font-size:6px;color:var(--brown-light);margin-bottom:10px}
+.meal-timeline-row{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.meal-time-chip{font-family:'Press Start 2P';font-size:7px;background:var(--terra);color:var(--parchment);border:2px solid var(--border);padding:5px 10px;box-shadow:var(--shadow-sm);white-space:nowrap;flex-shrink:0}
+.meal-time-chip.green{background:var(--green);color:var(--parchment)}
+.meal-time-chip.mint{background:var(--mint-dark);color:var(--parchment)}
+.meal-time-text{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:1.5}
+.meal-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.meal-tab{font-family:'Press Start 2P';font-size:6px;padding:7px 10px;border:2px solid var(--border);background:var(--cream-dark);color:var(--brown-mid);cursor:pointer;box-shadow:var(--shadow-sm);transition:background .1s}
+.meal-tab.active{background:var(--terra);color:var(--parchment);border-color:var(--terra-dark)}
+.meal-tab:hover:not(.active){background:var(--terra-pale)}
+.recipe-card{display:none;background:var(--cream);border:2px solid var(--border);padding:16px;box-shadow:var(--shadow-sm)}
+.recipe-card.visible{display:block;animation:tip-fade .2s ease}
+.recipe-label{font-family:'Press Start 2P';font-size:6px;color:var(--terra-dark);margin-bottom:4px}
+.recipe-title{font-family:'Press Start 2P';font-size:9px;color:var(--brown);margin-bottom:10px;line-height:1.7;text-shadow:1px 1px 0 var(--cream-dark)}
+.recipe-why{font-family:'Nunito',sans-serif;font-size:12px;color:var(--brown-mid);margin-bottom:12px;line-height:1.6;background:var(--mint-pale);border-left:3px solid var(--mint-dark);padding:6px 10px}
+.recipe-ingredients,.recipe-steps{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:2}
+.recipe-ingredients li,.recipe-steps li{margin-bottom:2px}
+.recipe-section-label{font-family:'Press Start 2P';font-size:6px;color:var(--brown-light);margin:10px 0 6px}
+.prep-schedule{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.prep-day{background:var(--cream);border:2px solid var(--border);padding:10px 14px;box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;gap:12px}
+.prep-day-name{font-family:'Press Start 2P';font-size:6px;color:var(--terra-dark);min-width:70px;padding-top:2px}
+.prep-day-text{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:1.6}
+.prep-day.highlight{border-color:var(--terra);background:var(--terra-pale)}
+.grocery-section{margin-top:4px}
+.grocery-category{margin-bottom:14px}
+.grocery-cat-label{font-family:'Press Start 2P';font-size:6px;color:var(--brown-light);margin-bottom:8px}
+.grocery-item{display:flex;align-items:center;gap:10px;background:var(--cream);border:2px solid var(--border);padding:9px 12px;margin-bottom:4px;cursor:pointer;transition:background .1s;box-shadow:var(--shadow-sm);user-select:none}
+.grocery-item:hover{background:var(--terra-pale)}
+.grocery-item.checked{background:var(--green-pale);border-color:var(--green);text-decoration:line-through;color:var(--brown-light)}
+.grocery-checkbox{width:20px;height:20px;border:2px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.grocery-item.checked .grocery-checkbox{background:var(--green);color:var(--parchment)}
+.grocery-item-name{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown)}
+.grocery-clear-btn{font-family:'Press Start 2P';font-size:6px;padding:7px 12px;border:2px solid var(--border);background:var(--cream-dark);color:var(--brown-mid);cursor:pointer;box-shadow:var(--shadow-sm);margin-top:8px;transition:background .1s}
+.grocery-clear-btn:hover{background:var(--terra-pale)}
+.meal-panel{display:none}.meal-panel.active{display:block;animation:tip-fade .2s ease}
 @media(max-width:640px){
   .hero{padding:28px 16px 18px}
   .hero h1{font-size:12px}
@@ -315,6 +352,297 @@ footer{text-align:center;padding:20px;font-size:7px;color:var(--brown-mid);backg
     </div>
     <div class="window-body" id="weather-widget-body">
       <div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid)">Loading weather...</div>
+    </div>
+  </div>
+
+  <div class="window">
+    <div class="window-bar">
+      <span class="title">🍱 MEAL_PREP.EXE</span>
+      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
+    </div>
+    <div class="window-body">
+
+      <!-- Sub-nav -->
+      <div id="meal-nav" style="display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="meal-tab active" onclick="showMealPanel('tonight')">⏰ TONIGHT</button>
+        <button class="meal-tab" onclick="showMealPanel('recipes')">🥢 RECIPES</button>
+        <button class="meal-tab" onclick="showMealPanel('schedule')">📅 PREP SCHEDULE</button>
+        <button class="meal-tab" onclick="showMealPanel('groceries')">🛒 GROCERIES</button>
+      </div>
+
+      <!-- Tonight panel -->
+      <div class="meal-panel active" id="meal-panel-tonight">
+        <div class="meal-timeline">
+          <div class="meal-timeline-title">⏰ YOUR TIMELINE TODAY</div>
+          <div class="meal-timeline-row">
+            <div class="meal-time-chip" id="meal-arrive-chip">6:30 PM</div>
+            <div class="meal-time-text">Arrive home. Assemble &amp; microwave prepped bowl (or start 10-min fish).</div>
+          </div>
+          <div class="meal-timeline-row">
+            <div class="meal-time-chip" id="meal-finish-chip">6:45 PM</div>
+            <div class="meal-time-text">Finish eating. Stay upright — digestion window begins.</div>
+          </div>
+          <div class="meal-timeline-row">
+            <div class="meal-time-chip green" id="meal-run-chip">7:45 PM</div>
+            <div class="meal-time-text" id="meal-run-text">Start 3km jog — UV safe window based on today's forecast.</div>
+          </div>
+          <div class="meal-timeline-row">
+            <div class="meal-time-chip mint" id="meal-done-chip">8:10 PM</div>
+            <div class="meal-time-text">Finish run. Cool down, hydrate, small recovery snack if hungry.</div>
+          </div>
+        </div>
+        <div class="run-window-box">
+          <div class="run-window-title">💡 WHY THIS TIMING WORKS</div>
+          <div class="run-window-text">
+            45–60 min between eating and running prevents acid reflux while giving your body fuel to burn.
+            Evening running (after 7:30 PM) keeps UV exposure to zero. Brown rice's low glycemic index means
+            glucose releases gradually — your muscles absorb it as fuel during the run, naturally flattening the insulin spike.
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipes panel -->
+      <div class="meal-panel" id="meal-panel-recipes">
+        <div class="meal-tabs">
+          <button class="meal-tab active" onclick="showRecipe('base')">🌾 BASE</button>
+          <button class="meal-tab" onclick="showRecipe('chicken')">🍗 CHICKEN</button>
+          <button class="meal-tab" onclick="showRecipe('tofu')">🧊 TOFU</button>
+          <button class="meal-tab" onclick="showRecipe('fish')">🐟 FISH</button>
+          <button class="meal-tab" onclick="showRecipe('congee')">🍚 CONGEE</button>
+          <button class="meal-tab" onclick="showRecipe('egg')">🥚 STEAMED EGG</button>
+          <button class="meal-tab" onclick="showRecipe('sweet-potato')">🍠 SWEET POTATO</button>
+          <button class="meal-tab" onclick="showRecipe('travel')">✈️ TRAVELLING</button>
+        </div>
+
+        <div class="recipe-card visible" id="recipe-base">
+          <div class="recipe-label">SUNDAY · 3 MIN HANDS-ON · RICE COOKER DOES THE REST</div>
+          <div class="recipe-title">GINGER RICE + BOK CHOY BASE</div>
+          <div class="recipe-why">Set it and forget it. Rice cooker runs unattended while you do anything else. Ginger in the water prevents reflux during the run. Makes 5 portions — this is the only cooking you do for the whole week.</div>
+          <div class="recipe-section-label">RICE (2 min)</div>
+          <ul class="recipe-ingredients">
+            <li>Rinse 2 cups brown rice, add to cooker</li>
+            <li>Drop in 2–3 slices of fresh ginger — done, press start</li>
+          </ul>
+          <div class="recipe-section-label">VEGGIES (1 min to prep, 5 min steam)</div>
+          <ul class="recipe-ingredients">
+            <li>Halve a bag of baby bok choy, throw in the rice cooker steam tray above the rice</li>
+            <li>Cooks at the same time — zero extra pots</li>
+            <li>Drizzle sesame oil + sesame seeds when done</li>
+          </ul>
+          <div class="recipe-section-label">WEEKNIGHT USE</div>
+          <ul class="recipe-ingredients">
+            <li>Grab a container from the fridge, microwave 2–3 min — meal done</li>
+            <li>Add soy sauce + sesame oil at the table to keep it feeling fresh each night</li>
+          </ul>
+        </div>
+
+        <div class="recipe-card" id="recipe-chicken">
+          <div class="recipe-label">SUNDAY · 5 MIN HANDS-ON · OVEN DOES THE REST</div>
+          <div class="recipe-title">SOY-SESAME CHICKEN BREAST</div>
+          <div class="recipe-why">5 min to season, 25 min the oven does everything. You walk away. Lean chicken avoids the fat that triggers reflux — and soy + sesame is a Taiwanese pantry flavour you already know.</div>
+          <div class="recipe-section-label">DO THIS WHILE RICE COOKS</div>
+          <ol class="recipe-steps">
+            <li>Preheat oven to 400°F / 200°C</li>
+            <li>Put 1.5–2 lbs chicken breasts in a baking dish</li>
+            <li>Pour over: 2 tbsp soy sauce, 1 tsp sesame oil, pinch white pepper</li>
+            <li>Put in oven. Set timer 25 min. Walk away</li>
+            <li>Cool, slice, divide into 5 containers with rice + veg</li>
+          </ol>
+          <div class="recipe-section-label">FLAVOUR SWITCH (no extra time)</div>
+          <ul class="recipe-ingredients">
+            <li>Splash of any dry cooking wine or apple cider vinegar = deeper flavour</li>
+            <li>Pinch of mixed spice or cinnamon = warmth without specialist spices</li>
+          </ul>
+        </div>
+
+        <div class="recipe-card" id="recipe-tofu">
+          <div class="recipe-label">SUNDAY · 5 MIN HANDS-ON · OR WEEKNIGHT 8-MIN PAN</div>
+          <div class="recipe-title">SOY-GINGER TOFU</div>
+          <div class="recipe-why">Tofu is alkaline — it actively calms acid reflux. Two ways to cook it: batch in the oven Sunday (hands-off), or quick-pan on a weeknight if you want something fresh and hot in under 10 min.</div>
+          <div class="recipe-section-label">SUNDAY BATCH (5 min hands-on, oven does rest)</div>
+          <ol class="recipe-steps">
+            <li>Cube 2 blocks extra-firm tofu — no pressing needed if you buy firm enough</li>
+            <li>Toss with: 2 tbsp soy sauce, 1 tsp sesame oil, 1 tsp grated ginger</li>
+            <li>Spread on a tray, bake 400°F / 200°C for 25 min alongside the chicken</li>
+          </ol>
+          <div class="recipe-section-label">WEEKNIGHT PAN (8 min, all hands-on)</div>
+          <ol class="recipe-steps">
+            <li>Slice tofu into planks, pat dry with paper towel</li>
+            <li>Pan on medium-high, tiny splash of sesame oil</li>
+            <li>3 min each side until golden — pour soy + ginger over, 1 min more</li>
+          </ol>
+        </div>
+
+        <div class="recipe-card" id="recipe-fish">
+          <div class="recipe-label">WEEKNIGHT · 10 MIN TOTAL · NO OVEN</div>
+          <div class="recipe-title">STEAMED WHITE FISH</div>
+          <div class="recipe-why">Fastest protein of the week. White fish digests in 30 min — you can eat later than usual and still run comfortably. Zero prep beyond placing it on a plate.</div>
+          <div class="recipe-section-label">METHOD (10 min start to eat)</div>
+          <ol class="recipe-steps">
+            <li>Boil water in a pot or wok with a steamer rack</li>
+            <li>Place fish fillet on a heatproof plate</li>
+            <li>Lay ginger strips + scallion on top, drizzle 1 tbsp soy sauce + tiny sesame oil</li>
+            <li>Steam 7–9 min — done when it flakes with a chopstick</li>
+            <li>Microwave a rice portion from the batch while fish steams</li>
+          </ol>
+          <div class="recipe-section-label">OPTIONAL FLAVOUR (30 sec)</div>
+          <ul class="recipe-ingredients">
+            <li>A few drops of white wine or lemon juice before steaming removes fishiness</li>
+            <li>Any white fish works — cod, tilapia, haddock, sole, whatever's fresh locally</li>
+          </ul>
+        </div>
+
+        <div class="recipe-card" id="recipe-congee">
+          <div class="recipe-label">WEEKNIGHT · 12 MIN · USES LEFTOVER RICE</div>
+          <div class="recipe-title">QUICK CONGEE (粥)</div>
+          <div class="recipe-why">The fastest hot meal on a tired night. Liquid base digests even quicker than solid rice — eat at 7:00 PM and run at 7:30 PM comfortably. Uses your Sunday batch rice so there's nothing new to cook.</div>
+          <div class="recipe-section-label">METHOD (12 min)</div>
+          <ol class="recipe-steps">
+            <li>Add 1 portion leftover rice + 2 cups stock to a small pot</li>
+            <li>Bring to boil, simmer 10 min — stir occasionally, it breaks down fast</li>
+            <li>Stir in any shredded chicken or tofu from your batch containers</li>
+            <li>Top with green onion + white pepper — done</li>
+          </ol>
+          <div class="recipe-section-label">WHY THIS BEATS SOLID RICE ON TIRED NIGHTS</div>
+          <ul class="recipe-ingredients">
+            <li>Faster digestion = shorter wait before your run</li>
+            <li>Warming + comforting — feels like a real cooked meal</li>
+          </ul>
+        </div>
+
+        <div class="recipe-card" id="recipe-egg">
+          <div class="recipe-label">WEEKNIGHT · 12 MIN · HANDS-OFF ONCE STEAMING</div>
+          <div class="recipe-title">TAIWANESE STEAMED EGG (蒸蛋)</div>
+          <div class="recipe-why">2 min to mix, 10 min to steam unattended. Pure protein, zero fat, silky texture. Perfect on low-mileage nights when you want something lighter. Classic Taiwanese weeknight food.</div>
+          <div class="recipe-section-label">METHOD</div>
+          <ol class="recipe-steps">
+            <li>Beat 3 eggs + 1.5 cups warm stock + 1 tsp soy sauce in a bowl</li>
+            <li>Cover with a plate or cling wrap</li>
+            <li>Steam on LOW for 10–12 min — do not let it boil hard or it goes bubbly</li>
+            <li>Drizzle sesame oil + green onion to finish</li>
+          </ol>
+        </div>
+
+        <div class="recipe-card" id="recipe-sweet-potato">
+          <div class="recipe-label">SUNDAY · 2 MIN HANDS-ON · STEAM TRAY IN RICE COOKER</div>
+          <div class="recipe-title">STEAMED SWEET POTATO (地瓜)</div>
+          <div class="recipe-why">Drop them in the rice cooker steam tray while your rice cooks — zero extra effort. Lower GI than rice, naturally alkaline (great for reflux), and feels like a treat. Swap in whenever you want variety.</div>
+          <div class="recipe-section-label">METHOD</div>
+          <ol class="recipe-steps">
+            <li>Wash 2–3 sweet potatoes, halve them — no peeling needed</li>
+            <li>Place on the rice cooker steam tray above the rice</li>
+            <li>Done when rice is done — takes the same time</li>
+          </ol>
+          <div class="recipe-section-label">WEEKNIGHT USE</div>
+          <ul class="recipe-ingredients">
+            <li>Cold from the fridge — just microwave 90 sec</li>
+            <li>Mash one half with a fork, top with batch chicken or tofu — done</li>
+            <li>Cold sweet potato has even lower GI (resistant starch) — fine to eat straight from fridge</li>
+          </ul>
+        </div>
+
+        <div class="recipe-card" id="recipe-travel">
+          <div class="recipe-label">TRAVELLING · NO BATCH COOK · SUPERMARKET ANYWHERE</div>
+          <div class="recipe-title">EUROPE TRAVEL MEALS</div>
+          <div class="recipe-why">Every supermarket in Europe stocks these. No specialist ingredients, no rice cooker needed. All under 15 min. The only rule: eat 45–60 min before your run, keep it low-fat and low-acid.</div>
+
+          <div class="recipe-section-label">OPTION 1 — PASTA + TUNA (10 MIN)</div>
+          <ul class="recipe-ingredients">
+            <li>Boil pasta (any shape) — 8–10 min</li>
+            <li>Drain, top with a tin of tuna in spring water (not oil), drizzle of olive oil, black pepper</li>
+            <li>Why it works: pasta is a slow-release carb, tuna is lean fast-digesting protein, zero acid</li>
+          </ul>
+
+          <div class="recipe-section-label">OPTION 2 — EGGS + TOAST (8 MIN)</div>
+          <ul class="recipe-ingredients">
+            <li>2–3 scrambled or poached eggs on wholegrain toast</li>
+            <li>No butter on the toast — reflux trigger. Olive oil drizzle instead</li>
+            <li>Why it works: eggs digest quickly, wholegrain toast is low GI</li>
+          </ul>
+
+          <div class="recipe-section-label">OPTION 3 — RICE PACKET + CHICKEN (5 MIN)</div>
+          <ul class="recipe-ingredients">
+            <li>Microwave rice packet (Uncle Ben's style — every European supermarket has these)</li>
+            <li>Top with rotisserie chicken from the deli counter — just pull the breast meat off</li>
+            <li>Drizzle soy sauce if you have it, or just black pepper + lemon</li>
+            <li>Why it works: zero cooking skill needed, same macros as your batch bowl at home</li>
+          </ul>
+
+          <div class="recipe-section-label">OPTION 4 — GREEK YOGHURT + OATS (3 MIN, NO HEAT)</div>
+          <ul class="recipe-ingredients">
+            <li>Bowl of oats (soak in cold water 5 min if no microwave) + plain Greek yoghurt</li>
+            <li>Banana or berries on top</li>
+            <li>Best for: hotel rooms, no kitchen at all, morning long run days</li>
+            <li>Note: eat this 60 min before running — dairy needs a little longer to settle</li>
+          </ul>
+
+          <div class="recipe-section-label">WHAT TO KEEP IN YOUR BAG</div>
+          <ul class="recipe-ingredients">
+            <li>Small bottle of soy sauce — makes any plain protein taste like home</li>
+            <li>Sesame oil sachet or small bottle — 1 tsp transforms a microwave rice packet</li>
+            <li>These fit in a carry-on, last the whole trip, available in Asian grocery shops across Europe</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Prep schedule panel -->
+      <div class="meal-panel" id="meal-panel-schedule">
+        <div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);margin-bottom:14px;line-height:1.8">
+          <strong>15 min of hands-on cooking Sunday = zero cooking Mon–Fri.</strong> The oven and rice cooker do everything else while you get on with your life.
+        </div>
+        <div class="prep-schedule">
+          <div class="prep-day">
+            <div class="prep-day-name">SATURDAY</div>
+            <div class="prep-day-text">🛒 Grocery pickup — 20 min. Do it Saturday so Sunday is free.</div>
+          </div>
+          <div class="prep-day highlight">
+            <div class="prep-day-name">SUNDAY</div>
+            <div class="prep-day-text">
+              🍳 <strong>15 min hands-on. Everything runs in parallel.</strong><br>
+              <br>
+              Min 1–3: Rinse rice, add ginger, press start on rice cooker. Place bok choy on steam tray above.<br>
+              Min 4–8: Season chicken (or tofu) in a baking dish. Preheat oven, put it in.<br>
+              Min 9–10: Halve sweet potatoes, add to rice cooker steam tray.<br>
+              Min 11–15: Pack 5 containers while everything finishes.<br>
+              <br>
+              Oven and rice cooker run unattended. You walk away.
+            </div>
+          </div>
+          <div class="prep-day">
+            <div class="prep-day-name">MON–TUES</div>
+            <div class="prep-day-text">🍱 Grab a container, microwave 3 min → eat → run. No cooking.</div>
+          </div>
+          <div class="prep-day">
+            <div class="prep-day-name">WEDNESDAY</div>
+            <div class="prep-day-text">🐟 Steamed fish — 10 min start to finish. Microwave batch rice alongside. One pot, no mess.</div>
+          </div>
+          <div class="prep-day">
+            <div class="prep-day-name">THURS–FRI</div>
+            <div class="prep-day-text">🍱 Last batch containers. Or quick congee if you want something warm — 12 min using leftover rice.</div>
+          </div>
+          <div class="prep-day">
+            <div class="prep-day-name">LONG RUN DAY</div>
+            <div class="prep-day-text">🏃 Within 30 min of finishing: microwave a batch container — rice + protein covers the 3:1 recovery window. No cooking needed.</div>
+          </div>
+        </div>
+        <div class="run-window-box">
+          <div class="run-window-title">💡 THE 2-MIN FLAVOUR TRICK</div>
+          <div class="run-window-text">
+            Keep soy sauce, sesame oil, and any vinegar on your counter.
+            Same batch bowl — different condiment drizzle — feels like a different meal every night. No extra cooking.
+          </div>
+        </div>
+      </div>
+
+      <!-- Groceries panel -->
+      <div class="meal-panel" id="meal-panel-groceries">
+        <div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);margin-bottom:14px;line-height:1.8">
+          Your weekly Saturday shop. Tap to check off as you go.
+        </div>
+        <div class="grocery-section" id="grocery-list"></div>
+        <button class="grocery-clear-btn" onclick="clearGroceries()">↺ RESET LIST</button>
+      </div>
+
     </div>
   </div>
 

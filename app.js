@@ -1080,6 +1080,102 @@ function showTip(idx) {
   document.querySelectorAll('.tip-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
 }
 
+// ── MEAL PREP ────────────────────────────────────────────────────────────────
+const GROCERY_LIST = [
+  { category: '🥬 PRODUCE', items: ['Fresh ginger root', 'Baby bok choy (1 bag)', 'Green onions / scallions', 'Sweet potatoes (2–3 medium)'] },
+  { category: '🐟 PROTEIN', items: ['Chicken breasts (1.5–2 lbs)', 'Extra-firm tofu (2 blocks)', 'White fish fillets — any fresh local white fish', 'Eggs (half dozen)'] },
+  { category: '🌾 GRAINS', items: ['Brown rice (or white rice if brown unavailable)', 'Stock — any low-sodium chicken or veg stock'] },
+  { category: '🫙 PANTRY (buy once, lasts weeks)', items: ['Soy sauce — available in any supermarket worldwide', 'Sesame oil', 'Sesame seeds', 'Black or white pepper', 'Any cooking wine or lemon juice'] }
+];
+
+function renderGroceries() {
+  const container = document.getElementById('grocery-list');
+  if (!container) return;
+  const checked = JSON.parse(localStorage.getItem('grocery_checked') || '{}');
+  container.innerHTML = GROCERY_LIST.map(cat => `
+    <div class="grocery-category">
+      <div class="grocery-cat-label">${cat.category}</div>
+      ${cat.items.map(item => {
+        const key = encodeURIComponent(item);
+        const isChecked = checked[key];
+        return `<div class="grocery-item${isChecked ? ' checked' : ''}" onclick="toggleGrocery('${key}',this)">
+          <div class="grocery-checkbox">${isChecked ? '✓' : ''}</div>
+          <div class="grocery-item-name">${item}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function toggleGrocery(key, el) {
+  const checked = JSON.parse(localStorage.getItem('grocery_checked') || '{}');
+  checked[key] = !checked[key];
+  localStorage.setItem('grocery_checked', JSON.stringify(checked));
+  el.classList.toggle('checked', checked[key]);
+  const box = el.querySelector('.grocery-checkbox');
+  if (box) box.textContent = checked[key] ? '✓' : '';
+}
+
+function clearGroceries() {
+  localStorage.removeItem('grocery_checked');
+  renderGroceries();
+}
+
+function showMealPanel(name) {
+  ['tonight','recipes','schedule','groceries'].forEach(n => {
+    const p = document.getElementById('meal-panel-' + n);
+    if (p) p.style.display = (n === name) ? 'block' : 'none';
+  });
+  document.querySelectorAll('#meal-nav .meal-tab').forEach(t =>
+    t.classList.toggle('active', t.getAttribute('onclick').includes(`'${name}'`))
+  );
+  if (name === 'groceries') renderGroceries();
+}
+
+function showRecipe(name) {
+  document.querySelectorAll('.recipe-card').forEach(c => c.classList.remove('visible'));
+  const card = document.getElementById('recipe-' + name);
+  if (card) card.classList.add('visible');
+  document.querySelectorAll('#meal-panel-recipes .meal-tab').forEach(t =>
+    t.classList.toggle('active', t.getAttribute('onclick').includes(`'${name}'`))
+  );
+}
+
+function renderMealTimeline() {
+  // Pull the best evening UV slot already computed by the weather widget
+  // Fall back to static defaults if weather hasn't loaded yet
+  const data = weatherCache;
+  let runHour = 19; // default 7 PM
+  if (data && data.hourly) {
+    const hours    = data.hourly.time.map(t => parseInt(t.split('T')[1]));
+    const uvValues = data.hourly.uv_index;
+    const tempValues = data.hourly.temperature_2m;
+    const { evening } = getBestRunWindows(hours, uvValues, tempValues);
+    if (evening) runHour = evening.h;
+  }
+
+  const fmt = h => {
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const disp = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return `${disp}:00 ${ampm}`;
+  };
+  const arriveHour = Math.max(6, runHour - 1);
+  const finishEat  = arriveHour;
+  const eatDone    = `${fmt(finishEat).replace(':00','').split(' ')[0]}:45 ${fmt(finishEat).split(' ')[1]}`;
+
+  const arriveChip = document.getElementById('meal-arrive-chip');
+  const finishChip = document.getElementById('meal-finish-chip');
+  const runChip    = document.getElementById('meal-run-chip');
+  const doneChip   = document.getElementById('meal-done-chip');
+  const runText    = document.getElementById('meal-run-text');
+
+  if (arriveChip) arriveChip.textContent = fmt(arriveHour);
+  if (finishChip) finishChip.textContent = eatDone;
+  if (runChip)    runChip.textContent    = fmt(runHour);
+  if (doneChip)   doneChip.textContent   = `${fmt(runHour).replace(':00','').split(' ')[0]}:25 ${fmt(runHour).split(' ')[1]}`;
+  if (runText)    runText.textContent    = `Start 3km jog — best UV window tonight is ${fmt(runHour)} (based on today's forecast).`;
+}
+
 // ── INIT ─────────────────────────────────────────────────────────────────────
 renderHero();
 renderAnimalStrip();
@@ -1090,7 +1186,9 @@ renderCalendar();
 renderMilestones();
 showTip(0);
 renderExtraRuns();
-renderWeatherWidget();
+renderWeatherWidget().then(() => renderMealTimeline());
+renderMealTimeline();
+renderGroceries();
 
 fetchRuns().then(() => {
   runsCache.forEach(r => {
