@@ -9,6 +9,21 @@ const SB_URL = 'https://uqvkrbeuxhddqgrhztwo.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxdmtyYmV1eGhkZHFncmh6dHdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1ODA5ODAsImV4cCI6MjA5NTE1Njk4MH0.yKbOuf-W96oEYeKniNzm9gxgSlenYh-rhglenOYSdkQ';
 const SB_HEADERS = { 'Content-Type':'application/json', 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY };
 
+// ── LOCATIONS (Fire Horse Travel Agency) ─────────────────────────────────────
+const LOCATIONS = [
+  { name: 'Toronto',   country: 'Canada',      lat: 43.70, lon: -79.42, tz: 'America%2FToronto', emoji: '🍁' },
+  { name: 'Crato',     country: 'Portugal',    lat: 39.28, lon: -7.65,  tz: 'Europe%2FLisbon',   emoji: '🔥' },
+  { name: 'Lisbon',    country: 'Portugal',    lat: 38.72, lon: -9.14,  tz: 'Europe%2FLisbon',   emoji: '💻' },
+  { name: 'Berlin',    country: 'Germany',     lat: 52.52, lon: 13.41,  tz: 'Europe%2FBerlin',   emoji: '🏠' },
+  { name: 'The Alps',  country: 'Switzerland', lat: 46.50, lon: 8.00,   tz: 'Europe%2FZurich',   emoji: '🏔️' },
+  { name: 'Spain',     country: 'Spain',       lat: 40.42, lon: -3.70,  tz: 'Europe%2FMadrid',   emoji: '🦀' },
+  { name: 'Taipei',    country: 'Taiwan',      lat: 25.03, lon: 121.56, tz: 'Asia%2FTaipei',     emoji: '🍜' },
+  { name: 'Tianzhong', country: 'Taiwan',      lat: 23.93, lon: 120.40, tz: 'Asia%2FTaipei',     emoji: '🌾' },
+  { name: 'Singapore', country: 'Singapore',   lat: 1.35,  lon: 103.82, tz: 'Asia%2FSingapore',  emoji: '🚢' },
+  { name: 'Tokyo',     country: 'Japan',       lat: 35.68, lon: 139.69, tz: 'Asia%2FTokyo',      emoji: '🌸' },
+];
+let currentLocIdx = 0;
+
 // In-memory cache of logged runs fetched from Supabase
 let runsCache = [];
 
@@ -38,6 +53,144 @@ async function deleteRun(mode, week, dayIdx) {
     });
     await fetchRuns();
   } catch(e) { console.warn('Supabase delete failed', e); }
+}
+
+async function saveExtraRun(kmActual, mood, notes) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/runs`, {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer':'return=minimal' },
+      body: JSON.stringify({ mode: 'extra', week: 0, day_idx: -1, km_actual: kmActual || null, mood: mood || null, notes: notes || null })
+    });
+    await fetchRuns();
+  } catch(e) { console.warn('Supabase extra run save failed', e); }
+}
+
+// ── UV INDEX / WEATHER ────────────────────────────────────────────────────────
+let weatherCache = null;
+let weatherCacheLocKey = null;
+
+async function fetchUV() {
+  const loc = LOCATIONS[currentLocIdx];
+  const today_str = new Date().toISOString().split('T')[0];
+  const cacheKey = `uv_${loc.name}_${today_str}`;
+
+  // localStorage cache per location per day
+  try {
+    const stored = JSON.parse(localStorage.getItem(cacheKey));
+    if (stored && stored.hourly) { weatherCache = stored; weatherCacheLocKey = cacheKey; return stored; }
+  } catch {}
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&hourly=uv_index,temperature_2m&timezone=${loc.tz}&forecast_days=1`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    const data = await res.json();
+    weatherCache = data;
+    weatherCacheLocKey = cacheKey;
+    localStorage.setItem(cacheKey, JSON.stringify(data));
+    return data;
+  } catch(e) { return null; }
+}
+
+function uvClass(uv) {
+  if (uv <= 2) return 'uv-low';
+  if (uv <= 5) return 'uv-moderate';
+  if (uv <= 7) return 'uv-high';
+  if (uv <= 10) return 'uv-very-high';
+  return 'uv-extreme';
+}
+
+function uvLabel(uv) {
+  if (uv <= 2) return 'Low';
+  if (uv <= 5) return 'Moderate';
+  if (uv <= 7) return 'High';
+  if (uv <= 10) return 'Very High';
+  return 'Extreme';
+}
+
+function getBestRunWindows(hours, uvValues, tempValues) {
+  const slots = hours.map((h, i) => ({ h, uv: uvValues[i] || 0, temp: tempValues ? tempValues[i] : 20 }));
+  const morning = slots.filter(x => x.h >= 5 && x.h <= 10);
+  const evening = slots.filter(x => x.h >= 17 && x.h <= 21);
+  const pickBest = arr => arr.length ? arr.reduce((a, b) => a.uv < b.uv ? a : b) : null;
+  return { morning: pickBest(morning), evening: pickBest(evening) };
+}
+
+async function renderWeatherWidget() {
+  const widget = document.getElementById('weather-widget-body');
+  if (!widget) return;
+  const loc = LOCATIONS[currentLocIdx];
+  widget.innerHTML = `<div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);padding:10px">Loading ${loc.emoji} ${loc.name} weather...</div>`;
+
+  const data = await fetchUV();
+  if (!data || !data.hourly) {
+    widget.innerHTML = `<div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);padding:10px">
+      Weather unavailable — check your connection.
+      <button onclick="renderWeatherWidget()" style="margin-left:12px;font-family:'Press Start 2P';font-size:6px;padding:6px 10px;border:2px solid var(--border);background:var(--terra);color:var(--parchment);cursor:pointer;box-shadow:var(--shadow-sm)">RETRY</button>
+    </div>`;
+    return;
+  }
+
+  const hours    = data.hourly.time.map(t => parseInt(t.split('T')[1]));
+  const uvValues = data.hourly.uv_index;
+  const tempValues = data.hourly.temperature_2m;
+  const now      = new Date().getHours();
+
+  const currentUV   = uvValues[now] || 0;
+  const currentTemp = tempValues ? tempValues[now] : null;
+  const { morning, evening } = getBestRunWindows(hours, uvValues, tempValues);
+
+  // Build hourly sparkline — every 2 hours, 6am–8pm
+  const sparkHours = [6,8,10,12,14,16,18,20];
+  const sparks = sparkHours.map(h => {
+    const uv = uvValues[h] || 0;
+    const isNow = Math.abs(h - now) < 2;
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;position:relative">
+      ${isNow ? '<div class="uv-now-marker">▼</div>' : ''}
+      <span class="uv-chip ${uvClass(uv)}" style="padding:4px 8px;font-size:7px;">${uv.toFixed(1)}</span>
+      <span style="font-family:'Nunito',sans-serif;font-size:10px;color:var(--brown-light)">${h}:00</span>
+    </div>`;
+  }).join('');
+
+  const fmtSlot = s => s
+    ? `<strong>${s.h}:00</strong> — UV ${s.uv.toFixed(1)} (${uvLabel(s.uv)})${s.temp !== undefined ? `, ${Math.round(s.temp)}°C` : ''}`
+    : '<span style="color:var(--brown-light)">no low-UV window</span>';
+  const bestText = `🌅 Morning: ${fmtSlot(morning)}<br>🌇 Evening: ${fmtSlot(evening)}`;
+
+  const warningText = currentUV >= 8
+    ? `<div style="background:var(--terra-pale);border:2px solid var(--terra);padding:8px 12px;margin-top:10px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown)">⚠️ UV ${currentUV.toFixed(1)} right now — high risk. Wear SPF 50 or run early morning.</div>`
+    : '';
+
+  widget.innerHTML = `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-family:'Press Start 2P';font-size:7px;color:var(--brown-light);margin-bottom:4px">NOW ${loc.emoji} ${loc.name.toUpperCase()}</div>
+          <span class="uv-chip ${uvClass(currentUV)}" style="font-size:10px">UV ${currentUV.toFixed(1)} — ${uvLabel(currentUV)}${currentTemp !== null ? ' · ' + Math.round(currentTemp) + '°C' : ''}</span>
+        </div>
+        <div id="loc-toggle" style="display:flex;gap:4px;flex-wrap:wrap;max-width:320px">
+          ${LOCATIONS.map((l, i) => `<button onclick="switchLocation(${i})" style="padding:4px 8px;border:2px solid var(--border);background:${i===currentLocIdx?'var(--terra)':'var(--cream)'};color:${i===currentLocIdx?'var(--parchment)':'var(--brown)'};font-family:'Press Start 2P';font-size:6px;cursor:pointer;box-shadow:var(--shadow-sm)">${l.emoji}</button>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:6px 0">
+        ${sparks}
+      </div>
+    </div>
+    <div class="run-window-box">
+      <div class="run-window-title">⚡ BEST TIME TO RUN</div>
+      <div class="run-window-text">${bestText}</div>
+    </div>
+    ${warningText}
+  `;
+}
+
+function switchLocation(idx) {
+  currentLocIdx = idx;
+  weatherCache = null;
+  renderWeatherWidget();
 }
 
 // ── PRE-TRAINING SCHEDULE ────────────────────────────────────────────────────
@@ -182,18 +335,34 @@ function saveChecks(mode, w, checks) {
   localStorage.setItem(storageKey(mode, w), JSON.stringify(checks));
 }
 function totalKmLogged() {
-  // Sum actual km from Supabase runs where km_actual is set, else fall back to scheduled km
   let total = 0;
   runsCache.forEach(r => {
     if (r.km_actual) { total += parseFloat(r.km_actual); return; }
-    // fall back to scheduled km for checked-off runs without a logged distance
+    if (r.mode === 'extra') return; // extra runs with no km_actual contribute nothing
     const schedule = r.mode === 'pre' ? PRETRAIN : SCHEDULE;
     const weekIdx  = r.week - 1;
     if (schedule[weekIdx] && schedule[weekIdx][r.day_idx]) {
       total += schedule[weekIdx][r.day_idx].km || 0;
     }
   });
+  // Add extra bonus runs (only those with a logged km)
+  runsCache.filter(r => r.mode === 'extra' && r.km_actual)
+           .forEach(r => { total += parseFloat(r.km_actual); });
   return Math.round(total * 10) / 10;
+}
+
+function extraRunsThisWeek() {
+  const mode = PRE_TRAINING ? 'pre' : 'plan';
+  const week = PRE_TRAINING ? PRE_WEEK : CURR;
+  // Extra runs tagged as mode:'extra' don't have a week reference,
+  // so we use logged_at date to bucket them into the current 7-day window
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 86400000);
+  return runsCache.filter(r => {
+    if (r.mode !== 'extra') return false;
+    const logged = r.logged_at ? new Date(r.logged_at) : null;
+    return logged && logged >= weekAgo;
+  });
 }
 
 function kmThisWeek() {
@@ -205,6 +374,10 @@ function kmThisWeek() {
     const schedule = r.mode === 'pre' ? PRETRAIN : SCHEDULE;
     total += (schedule[r.week-1]?.[r.day_idx]?.km || 0);
   });
+  // Include bonus runs logged in the last 7 days
+  const weekAgo = new Date(Date.now() - 7 * 86400000);
+  runsCache.filter(r => r.mode === 'extra' && r.km_actual && r.logged_at && new Date(r.logged_at) >= weekAgo)
+           .forEach(r => { total += parseFloat(r.km_actual); });
   return Math.round(total * 10) / 10;
 }
 
@@ -449,6 +622,68 @@ function renderDialogue() {
   document.getElementById('dialogue-text').innerHTML = msg + '<span class="cursor">▼</span>';
 }
 
+function renderExtraRuns() {
+  const container = document.getElementById('extra-runs-list');
+  if (!container) return;
+  const extras = runsCache.filter(r => r.mode === 'extra');
+  if (!extras.length) {
+    container.innerHTML = '<div style="font-family:\'Nunito\',sans-serif;font-size:12px;color:var(--brown-light);padding:4px 0">No bonus runs logged yet.</div>';
+    return;
+  }
+  container.innerHTML = extras.slice().reverse().map(r => {
+    const dt = r.logged_at ? new Date(r.logged_at).toLocaleDateString('en-GB', {day:'numeric',month:'short'}) : '—';
+    return `<div class="check-item done" style="cursor:default">
+      <div class="check-box">✦</div>
+      <div class="check-content">
+        <div class="check-day">${dt}</div>
+        <div class="check-name">Bonus Run${r.km_actual ? ' — ' + r.km_actual + 'km' : ''}</div>
+        <div class="check-detail">${r.notes || (r.mood || 'Extra effort 💪')}</div>
+      </div>
+      <span class="check-badge badge-run">${r.km_actual ? r.km_actual + 'km' : 'RUN ✦'}</span>
+    </div>`;
+  }).join('');
+}
+
+function estimateDuration(km) {
+  // ~7:30/km comfortable long run pace for a novice
+  const totalMin = Math.round(km * 7.5);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return h > 0 ? `~${h}h ${m}m` : `~${m}m`;
+}
+
+function longRunIndex(days) {
+  // Explicit long/race day first
+  const explicit = days.findIndex(d => d.type === 'long' || (d.type === 'race' && d.km > 20));
+  if (explicit !== -1) return explicit;
+  // Pre-training: Sunday (idx 6) easy run is the longest of the week
+  const maxKm = Math.max(...days.map(d => d.km || 0));
+  if (maxKm === 0) return -1;
+  return days.findIndex(d => d.km === maxKm);
+}
+
+function renderLongRunNudge(days, checks, mode, weekRef) {
+  const nudge = document.getElementById('long-run-nudge');
+  if (!nudge) return;
+  const longRunIdx = longRunIndex(days);
+  if (longRunIdx === -1) { nudge.style.display = 'none'; return; }
+  const isLogged = !!checks[longRunIdx];
+  if (isLogged) { nudge.style.display = 'none'; return; }
+  // Show nudge from Thursday onwards (getDay: 0=Sun,4=Thu,5=Fri,6=Sat)
+  const dow = today().getDay();
+  const isLateWeek = dow >= 4 || dow === 0;
+  if (!isLateWeek) { nudge.style.display = 'none'; return; }
+  const d = days[longRunIdx];
+  const dur = estimateDuration(d.km);
+  const urgency = dow === 0 ? '⚠️ TODAY IS LONG RUN DAY' : dow === 6 ? '⚠️ TOMORROW IS LONG RUN DAY' : '⚠️ LONG RUN NOT YET SCHEDULED';
+  nudge.style.display = 'block';
+  nudge.innerHTML = `
+    <div style="font-family:'Press Start 2P';font-size:7px;margin-bottom:6px">${urgency}</div>
+    <div style="font-family:'Nunito',sans-serif;font-size:13px;line-height:1.8">
+      <strong>${d.km}km long run</strong> — block out <strong>${dur}</strong> on Sunday before anything else fills the slot.${dow <= 5 ? ' Set a calendar hold now.' : ''}
+    </div>`;
+}
+
 function buildChecklistHTML(days, checks, mode, weekRef) {
   const list = document.getElementById('checklist');
   list.innerHTML = '';
@@ -456,11 +691,13 @@ function buildChecklistHTML(days, checks, mode, weekRef) {
 
   days.forEach((d, i) => {
     const isRest = d.type === 'rest';
+    const isLongRun = d.type === 'long' || (d.type === 'race' && d.km > 20) || i === longRunIndex(days);
     const isDone = !!checks[i];
     if (!isRest) { checkableCount++; if (isDone) doneCount++; }
 
     const item = document.createElement('div');
     item.className = 'check-item' + (isDone ? ' done' : '') + (isRest ? ' rest-day' : '');
+    if (isLongRun && !isDone) item.style.cssText = 'border-color:var(--yellow);border-width:3px;background:var(--yellow-pale)';
     if (!isRest) item.onclick = () => toggleCheck(i, mode, weekRef);
 
     const label = dayLabel(d);
@@ -468,12 +705,16 @@ function buildChecklistHTML(days, checks, mode, weekRef) {
     const kmLine = runLog?.km_actual
       ? `<span style="font-family:'Press Start 2P';font-size:7px;color:var(--green)">✓ ${runLog.km_actual}km ${runLog.mood || ''}</span>`
       : '';
+    const durLine = isLongRun && !isDone && d.km
+      ? `<span style="font-family:'Press Start 2P';font-size:6px;color:var(--terra-dark);margin-top:4px;display:block">⏱ ${estimateDuration(d.km)} — block your Sunday</span>`
+      : '';
     item.innerHTML = `
       <div class="check-box">${isDone ? '✓' : isRest ? '—' : ''}</div>
       <div class="check-content">
         <div class="check-day">${DAY_NAMES[i]}</div>
         <div class="check-name">${dayName(d)}</div>
         <div class="check-detail">${dayDetail(d, weekRef)}</div>
+        ${durLine}
         ${kmLine}
       </div>
       <span class="check-badge ${label.cls}">${label.text}</span>`;
@@ -514,6 +755,7 @@ function renderChecklist() {
     const { doneCount, checkableCount } = buildChecklistHTML(days, checks, 'pre', PRE_WEEK);
     document.getElementById('done-pill').textContent = `${doneCount} / ${checkableCount} DONE`;
     renderHearts(doneCount, checkableCount);
+    renderLongRunNudge(days, checks, 'pre', PRE_WEEK);
 
     const streakRow = document.getElementById('streak-row');
     streakRow.innerHTML = `
@@ -536,6 +778,7 @@ function renderChecklist() {
   const { doneCount, checkableCount } = buildChecklistHTML(days, checks, 'plan', CURR);
   document.getElementById('done-pill').textContent = `${doneCount} / ${checkableCount} DONE`;
   renderHearts(doneCount, checkableCount);
+  renderLongRunNudge(days, checks, 'plan', CURR);
 
   const streakRow = document.getElementById('streak-row');
   streakRow.innerHTML = `
@@ -619,11 +862,21 @@ function selectMood(btn) {
 }
 
 async function submitRun() {
-  const { dayIdx, mode, week } = _modalCtx;
   const km    = parseFloat(document.getElementById('modal-km').value) || null;
   const notes = document.getElementById('modal-notes').value.trim() || null;
-
   document.getElementById('modal-overlay').style.display = 'none';
+
+  if (_extraModal) {
+    _extraModal = false;
+    await saveExtraRun(km, _selectedMood || null, notes);
+    renderExtraRuns();
+    renderHero();
+    renderMilestones();
+    _modalCtx = {};
+    return;
+  }
+
+  const { dayIdx, mode, week } = _modalCtx;
   await saveRun(mode, week, dayIdx, km, _selectedMood || null, notes);
   renderChecklist();
   renderHero();
@@ -635,6 +888,23 @@ async function submitRun() {
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+
+// ── EXTRA RUN MODAL ───────────────────────────────────────────────────────────
+let _extraModal = false;
+
+function openExtraModal() {
+  _extraModal = true;
+  _modalCtx = {};
+  _selectedMood = '';
+  document.getElementById('modal-km').value = '';
+  document.getElementById('modal-notes').value = '';
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('modal-day-label').textContent = '✦ BONUS RUN';
+  const overlay = document.getElementById('modal-overlay');
+  overlay.style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-km').focus(), 100);
+}
+
 
 // ── CALENDAR ─────────────────────────────────────────────────────────────────
 let calYear, calMonth;
@@ -811,7 +1081,6 @@ function showTip(idx) {
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-// Render with localStorage first for instant load, then re-render once Supabase responds
 renderHero();
 renderAnimalStrip();
 renderProgressBar();
@@ -820,11 +1089,12 @@ renderChecklist();
 renderCalendar();
 renderMilestones();
 showTip(0);
+renderExtraRuns();
+renderWeatherWidget();
 
-// Fetch Supabase runs, sync to localStorage, re-render
 fetchRuns().then(() => {
-  // Sync Supabase → localStorage so checkboxes reflect server state
   runsCache.forEach(r => {
+    if (r.mode === 'extra' || r.day_idx < 0) return;
     const checks = loadChecks(r.mode, r.week);
     if (!checks[r.day_idx]) {
       checks[r.day_idx] = true;
@@ -834,4 +1104,5 @@ fetchRuns().then(() => {
   renderHero();
   renderChecklist();
   renderMilestones();
+  renderExtraRuns();
 });
