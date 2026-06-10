@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Debbie Runs Kobe ✦</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -44,6 +44,7 @@ body {
 .app-hdr {
   background: linear-gradient(150deg, var(--terra) 0%, var(--terra-dark) 100%);
   padding: 14px 16px 12px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -78,7 +79,8 @@ body {
 .app-nav {
   background: var(--card);
   border-top: 1px solid var(--border);
-  padding: 6px 0 env(safe-area-inset-bottom, 10px);
+  padding: 6px 0;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   display: flex;
   justify-content: space-around;
   flex-shrink: 0;
