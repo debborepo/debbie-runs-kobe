@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Debbie Runs Kobe ✦</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,704 +10,655 @@
 <meta name="apple-mobile-web-app-title" content="Debbie Runs">
 <meta name="theme-color" content="#E08576">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --cream:#F1CCAA; --cream-dark:#E8B990; --cream-darker:#D4A070;
-  --parchment:#ECE1C9; --brown:#4D433C; --brown-mid:#7A6458; --brown-light:#A08878;
-  --terra:#E08576; --terra-dark:#C06858; --terra-pale:#F5D0C8;
-  --mint:#B7E0D7; --mint-dark:#7BBFB5; --mint-pale:#DFF3EF;
-  --yellow:#E8C060; --yellow-pale:#F5E8C0;
-  --green:#7BBF88; --green-pale:#D0EDCC;
-  --border:#4D433C; --shadow:3px 3px 0 #4D433C; --shadow-sm:2px 2px 0 #4D433C;
+  --bg: #FAF5EE;
+  --card: #FFFFFF;
+  --parchment: #FAF5EE;
+  --cream: #F1CCAA; --cream-dark: #E8B990; --cream-darker: #D4A070;
+  --brown: #4D433C; --brown-mid: #7A6458; --brown-light: #B0988A;
+  --terra: #E08576; --terra-dark: #C06858; --terra-pale: #F5D0C8;
+  --mint: #5CA89E; --mint-dark: #3D8C82; --mint-pale: #DFF3EF;
+  --yellow: #C89A18; --yellow-pale: #FDF3D0; --yellow-border: #E8D090;
+  --green: #5A9E68; --green-pale: #D0EDCC; --green-border: #A0D0A8;
+  --border: #E4D8CC;
+  --shadow: 0 2px 8px rgba(0,0,0,.07);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.10);
 }
-::-webkit-scrollbar{width:10px}
-::-webkit-scrollbar-track{background:var(--cream-dark)}
-::-webkit-scrollbar-thumb{background:var(--terra);border:2px solid var(--border)}
-body{background:var(--cream);background-image:linear-gradient(rgba(61,43,31,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(61,43,31,.04) 1px,transparent 1px);background-size:20px 20px;font-family:'Press Start 2P',monospace;color:var(--brown);font-size:10px;line-height:1.6}
-.marquee-bar{background:var(--terra-dark);border-bottom:3px solid var(--border);height:36px;overflow:hidden;display:flex;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 3px 0 var(--border)}
-.marquee-bar span{font-size:8px;color:var(--cream);white-space:nowrap;padding:0 20px;animation:marquee 32s linear infinite;display:inline-block;text-shadow:1px 1px 0 var(--border)}
-@keyframes marquee{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-.hero{text-align:center;padding:44px 40px 26px;position:relative;z-index:1}
-.avatar-hero{display:block;margin:0 auto 10px;width:120px;height:auto;image-rendering:pixelated;animation:avatar-float 2.4s ease-in-out infinite,flame-glow 1.2s ease-in-out infinite alternate}
-@keyframes avatar-float{0%,100%{transform:translateY(0) rotate(-2deg) scale(1)}25%{transform:translateY(-10px) rotate(1deg) scale(1.04)}50%{transform:translateY(-14px) rotate(2deg) scale(1.05)}75%{transform:translateY(-6px) rotate(-1deg) scale(1.02)}}
-@keyframes flame-glow{from{filter:drop-shadow(0 8px 6px rgba(77,67,60,.18)) drop-shadow(0 -4px 8px rgba(232,150,60,0))}to{filter:drop-shadow(0 8px 6px rgba(77,67,60,.18)) drop-shadow(0 -6px 12px rgba(232,150,60,.5))}}
-.hero h1{font-size:18px;color:var(--brown);line-height:1.9;margin-bottom:12px;text-shadow:3px 3px 0 var(--cream-darker)}
-.hero p{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);max-width:500px;margin:0 auto 22px;line-height:1.9}
-.hero-stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.stat-pill{background:var(--parchment);border:3px solid var(--border);padding:8px 14px;box-shadow:var(--shadow);font-size:8px;color:var(--brown-mid);display:flex;align-items:center;gap:8px}
-.stat-pill strong{font-size:13px;color:var(--terra-dark);text-shadow:1px 1px 0 var(--border)}
-.window{background:var(--parchment);border:3px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
-.window-bar{background:linear-gradient(90deg,var(--terra-dark),var(--terra));border-bottom:3px solid var(--border);padding:7px 10px;display:flex;justify-content:space-between;align-items:center}
-.window-bar .title{font-size:8px;color:var(--parchment);text-shadow:1px 1px 0 var(--border)}
-.window-btns{display:flex;gap:4px}
-.win-btn{width:16px;height:16px;border:2px solid var(--border);background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--border);cursor:pointer;font-family:monospace;font-weight:700;box-shadow:1px 1px 0 var(--border)}
-.win-btn:hover{background:var(--terra-pale)}
-.window-body{padding:20px}
-.progress-section{max-width:980px;margin:0 auto 10px;padding:0 32px;position:relative;z-index:1}
-.speed-tier{background:var(--cream);border:2px solid var(--border);box-shadow:var(--shadow-sm);padding:12px 16px;margin-bottom:4px}
-.speed-tier-title{font-size:7px;color:var(--brown-mid);margin-bottom:12px;text-align:center}
-.speed-animals{display:flex;justify-content:space-between;align-items:flex-end;gap:4px}
-.animal-step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
-.animal-emoji{font-size:22px;line-height:1;filter:grayscale(1) opacity(.3);transition:filter .3s,transform .3s}
-.animal-emoji.active{filter:none;transform:scale(1.25);animation:animal-bounce .6s ease-in-out infinite alternate}
-.animal-emoji.unlocked{filter:none}
-@keyframes animal-bounce{from{transform:scale(1.2) translateY(0)}to{transform:scale(1.3) translateY(-4px)}}
-.animal-name{font-size:5px;color:var(--brown-mid);text-align:center}
-.animal-pace{font-size:5px;color:var(--brown-light);text-align:center;margin-top:2px}
-.animal-step.active .animal-name,.animal-step.active .animal-pace{color:var(--terra-dark)}
-.animal-connector{flex:.3;height:3px;background:var(--cream-dark);border:1px solid var(--border);align-self:center;margin-bottom:28px}
-.animal-connector.done{background:var(--terra)}
-.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.prog-label{font-size:8px;color:var(--brown)}
-.prog-pct{font-size:10px;color:var(--terra-dark);text-shadow:1px 1px 0 var(--border)}
-.capsule-bar-wrap{background:var(--brown-mid);border:3px solid var(--border);border-radius:20px;height:28px;overflow:hidden;box-shadow:var(--shadow-sm);position:relative}
-.capsule-bar-fill{height:100%;background:linear-gradient(90deg,var(--terra) 0%,#EFA090 50%,var(--terra) 100%);border-radius:20px;transition:width .5s;position:relative}
-.capsule-bar-fill::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent 0px,transparent 6px,rgba(255,255,255,.2) 6px,rgba(255,255,255,.2) 10px);border-radius:20px}
-.capsule-bar-label{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:7px;color:var(--cream);text-shadow:1px 1px 0 var(--border)}
-.week-track-row{display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px}
-.week-track-label{font-size:7px;color:var(--brown-mid)}
-.seg-track{display:flex;gap:3px;height:18px;margin-bottom:6px}
-.seg{flex:1;border:2px solid var(--border);background:var(--cream-dark)}
-.seg.done{background:var(--terra);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
-.seg.current{background:var(--yellow);animation:pulse-seg .7s ease-in-out infinite alternate}
-@keyframes pulse-seg{from{box-shadow:0 0 0 var(--yellow)}to{box-shadow:0 0 8px var(--yellow),0 0 2px var(--brown)}}
-.seg-labels{display:flex;justify-content:space-between}
-.seg-label{font-size:6px;color:var(--brown-light)}
-.week-chips{display:flex;gap:3px;flex-wrap:wrap;margin-top:10px}
-.week-chip{font-size:5px;padding:3px 5px;border:2px solid var(--border)}
-.week-chip.done{background:var(--terra-pale);color:var(--brown)}
-.week-chip.current{background:var(--yellow);color:var(--brown);animation:pulse-seg .7s ease-in-out infinite alternate}
-.week-chip.upcoming{background:var(--cream-dark);color:var(--brown-light)}
-.hearts-row{display:flex;gap:4px;margin-top:12px;align-items:center}
-.heart-label{font-size:7px;color:var(--brown-mid);margin-right:6px}
-.pixel-heart{font-size:16px;line-height:1;transition:opacity .2s}
-.pixel-heart.empty{opacity:.2}
-.dialogue-bubble{background:var(--parchment);border:3px solid var(--border);padding:12px 16px;margin-top:14px;position:relative;box-shadow:var(--shadow-sm)}
-.dialogue-bubble::after{content:'';position:absolute;bottom:-11px;left:24px;border:6px solid transparent;border-top-color:var(--border)}
-.dialogue-bubble::before{content:'';position:absolute;bottom:-8px;left:25px;border:5px solid transparent;border-top-color:var(--parchment);z-index:1}
-.dialogue-text{font-size:8px;color:var(--brown);line-height:2}
-.cursor{display:inline-block;animation:blink .7s step-end infinite}
-@keyframes blink{50%{opacity:0}}
-.main{padding:0 32px 52px;display:flex;flex-direction:column;gap:22px;max-width:980px;margin:0 auto;position:relative;z-index:1}
-.week-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px}
-.week-title{font-size:10px;color:var(--terra-dark);text-shadow:1px 1px 0 var(--border)}
-.week-subtitle{font-family:'Nunito',sans-serif;font-size:12px;color:var(--brown-mid);margin-top:6px}
-.done-pill{background:var(--green-pale);border:2px solid var(--border);padding:6px 12px;font-size:7px;color:var(--brown);box-shadow:var(--shadow-sm)}
-.checklist{display:flex;flex-direction:column;gap:7px}
-.check-item{display:flex;align-items:center;gap:12px;background:var(--cream);border:2px solid var(--border);padding:12px 14px;cursor:pointer;transition:background .1s,border-color .1s;user-select:none;box-shadow:var(--shadow-sm)}
-.check-item:hover:not(.rest-day){background:var(--terra-pale);border-color:var(--terra-dark)}
-.check-item.done{background:var(--green-pale);border-color:var(--green)}
-.check-item.rest-day{background:var(--cream-dark);border-color:var(--cream-darker);cursor:default;opacity:.7}
-.check-box{width:24px;height:24px;flex-shrink:0;border:3px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:var(--shadow-sm)}
-.check-item.done .check-box{background:var(--green);color:var(--parchment)}
-.check-item.rest-day .check-box{background:var(--cream-darker);color:var(--brown-light);font-size:10px}
-.check-content{flex:1}
-.check-day{font-size:7px;color:var(--brown-light);margin-bottom:3px}
-.check-name{font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--brown)}
-.check-detail{font-family:'Nunito',sans-serif;font-size:12px;color:var(--brown-mid);margin-top:3px;line-height:1.5}
-.check-badge{font-family:'Press Start 2P';font-size:7px;padding:5px 8px;white-space:nowrap;flex-shrink:0;border:2px solid var(--border);box-shadow:var(--shadow-sm)}
-.badge-run{background:var(--terra-pale);color:var(--brown)}
-.badge-cross{background:var(--mint-pale);color:var(--brown)}
-.badge-long{background:var(--yellow-pale);color:var(--brown)}
-.badge-rest{background:var(--cream-dark);color:var(--brown-light)}
-.badge-race{background:var(--yellow);color:var(--brown);animation:pulse-seg .8s ease-in-out infinite alternate}
-.streak-row{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap}
-.streak-pill{background:var(--parchment);border:2px solid var(--border);padding:5px 10px;font-size:7px;color:var(--brown);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:5px}
-.streak-emoji{font-size:14px}
-.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.cal-nav-btn{width:32px;height:32px;border:3px solid var(--border);background:var(--terra);color:var(--parchment);font-family:'Press Start 2P';font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);transition:background .1s}
-.cal-nav-btn:hover{background:var(--terra-dark)}
-.cal-month-label{font-size:10px;color:var(--brown)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-day-header{background:var(--terra);border:2px solid var(--border);height:2em;display:flex;align-items:center;justify-content:center;font-size:7px;color:var(--parchment);text-shadow:1px 1px 0 var(--border)}
-.cal-cell{background:var(--cream);border:2px solid var(--cream-darker);min-height:68px;padding:5px}
-.cal-cell.today{border:3px solid var(--terra-dark)}
-.cal-cell.other{opacity:.3}
-.day-num{font-size:7px;color:var(--brown-light)}
-.cal-cell.today .day-num{color:var(--terra-dark);font-size:8px}
-.run-dot{margin-top:3px;font-family:'Nunito',sans-serif;font-size:10px;padding:2px 4px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid}
-.run-dot.easy{background:var(--terra-pale);color:var(--brown);border-color:var(--terra)}
-.run-dot.long{background:var(--yellow-pale);color:var(--brown);border-color:var(--yellow)}
-.run-dot.cross{background:var(--mint-pale);color:var(--brown);border-color:var(--mint-dark)}
-.run-dot.rest{background:var(--cream-dark);color:var(--brown-light);border-color:var(--cream-darker)}
-.run-dot.race{background:var(--yellow);color:var(--brown);border-color:var(--terra-dark)}
-.cal-legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
-.cal-legend span{font-family:'Nunito',sans-serif;font-size:11px;color:var(--brown-mid);display:flex;align-items:center;gap:5px}
-.cal-legend i{width:18px;height:8px;display:inline-block;border:1px solid var(--border)}
-.milestones-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px}
-.milestone-card{border:3px solid var(--border);box-shadow:var(--shadow);transition:transform .15s;overflow:hidden}
-.milestone-card:hover{transform:translateY(-2px)}
-.milestone-card.unlocked{border-color:var(--brown)}
-.milestone-card.locked{opacity:.55;filter:grayscale(.4)}
-.ms-header{padding:12px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--border)}
-.ms-header.unlocked{background:linear-gradient(135deg,var(--yellow-pale),var(--parchment))}
-.ms-header.locked{background:var(--cream-dark)}
-.ms-icon{font-size:2em}
-.ms-badge{font-size:6px;padding:4px 7px;border:2px solid var(--border);box-shadow:var(--shadow-sm)}
-.ms-badge.unlocked{background:var(--yellow);color:var(--brown)}
-.ms-badge.locked{background:var(--cream-darker);color:var(--brown-light)}
-.ms-body{padding:10px 12px 12px;background:var(--parchment)}
-.ms-name{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--brown);margin-bottom:4px}
-.ms-desc{font-family:'Nunito',sans-serif;font-size:11px;color:var(--brown-mid);line-height:1.5}
-.ms-date{font-family:'Nunito',sans-serif;font-size:11px;color:var(--green);font-weight:700;margin-top:6px}
-.tip-dots{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
-.tip-dot{width:10px;height:10px;border:2px solid var(--border);background:var(--cream-dark);cursor:pointer;transition:background .15s;box-shadow:var(--shadow-sm)}
-.tip-dot.active{background:var(--terra)}
-.tip-of-week{background:var(--cream);border:2px solid var(--border);box-shadow:var(--shadow-sm);padding:18px;display:flex;gap:16px;align-items:flex-start;animation:tip-fade .25s ease}
-@keyframes tip-fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.tip-icon{font-size:34px;flex-shrink:0;line-height:1}
-.tip-content{flex:1}
-.tip-week-label{font-size:7px;color:var(--brown-light);margin-bottom:6px}
-.tip-title{font-size:9px;color:var(--terra-dark);margin-bottom:10px;text-shadow:1px 1px 0 var(--cream-dark);line-height:1.6}
-.tip-body{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);line-height:1.8}
-.tip-tag{display:inline-block;margin-top:10px;font-family:'Press Start 2P';font-size:6px;padding:4px 8px;border:2px solid var(--border);background:var(--parchment);color:var(--brown-light);box-shadow:var(--shadow-sm)}
-footer{text-align:center;padding:20px;font-size:7px;color:var(--brown-mid);background:var(--cream-dark);border-top:3px solid var(--border);letter-spacing:2px}
-.mood-btn{font-family:'Nunito',sans-serif;font-size:13px;padding:8px 12px;border:2px solid var(--border);background:var(--cream);color:var(--brown);cursor:pointer;box-shadow:var(--shadow-sm);transition:background .1s}
-.mood-btn:hover,.mood-btn.selected{background:var(--terra-pale);border-color:var(--terra-dark)}
-.add-extra-btn{display:block;width:100%;margin-top:10px;background:var(--parchment);border:2px dashed var(--terra);padding:10px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--terra-dark);cursor:pointer;text-align:center;transition:background .1s}
-.add-extra-btn:hover{background:var(--terra-pale)}
-.uv-chip{display:inline-block;padding:6px 12px;border:2px solid var(--border);font-size:8px;box-shadow:var(--shadow-sm)}
-.uv-low{background:var(--green-pale);color:var(--brown)}
-.uv-moderate{background:var(--yellow-pale);color:var(--brown)}
-.uv-high{background:#FFD7A8;color:var(--brown)}
-.uv-very-high{background:#FFBFA8;color:var(--brown)}
-.uv-extreme{background:var(--terra-pale);color:var(--brown)}
-.uv-now-marker{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:10px;line-height:1}
-.run-window-box{background:var(--mint-pale);border:2px solid var(--mint-dark);padding:12px 14px;margin-top:12px;box-shadow:var(--shadow-sm)}
-.run-window-title{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--brown-light);margin-bottom:8px}
-.run-window-text{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:1.8}
-/* ── MEAL PREP ── */
-.meal-timeline{background:var(--yellow-pale);border:2px solid var(--border);padding:12px 16px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
-.meal-timeline-title{font-family:'Press Start 2P';font-size:6px;color:var(--brown-light);margin-bottom:10px}
-.meal-timeline-row{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
-.meal-time-chip{font-family:'Press Start 2P';font-size:7px;background:var(--terra);color:var(--parchment);border:2px solid var(--border);padding:5px 10px;box-shadow:var(--shadow-sm);white-space:nowrap;flex-shrink:0}
-.meal-time-chip.green{background:var(--green);color:var(--parchment)}
-.meal-time-chip.mint{background:var(--mint-dark);color:var(--parchment)}
-.meal-time-text{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:1.5}
-.meal-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
-.meal-tab{font-family:'Press Start 2P';font-size:6px;padding:7px 10px;border:2px solid var(--border);background:var(--cream-dark);color:var(--brown-mid);cursor:pointer;box-shadow:var(--shadow-sm);transition:background .1s}
-.meal-tab.active{background:var(--terra);color:var(--parchment);border-color:var(--terra-dark)}
-.meal-tab:hover:not(.active){background:var(--terra-pale)}
-.recipe-card{display:none;background:var(--cream);border:2px solid var(--border);padding:16px;box-shadow:var(--shadow-sm)}
-.recipe-card.visible{display:block;animation:tip-fade .2s ease}
-.recipe-label{font-family:'Press Start 2P';font-size:6px;color:var(--terra-dark);margin-bottom:4px}
-.recipe-title{font-family:'Press Start 2P';font-size:9px;color:var(--brown);margin-bottom:10px;line-height:1.7;text-shadow:1px 1px 0 var(--cream-dark)}
-.recipe-why{font-family:'Nunito',sans-serif;font-size:12px;color:var(--brown-mid);margin-bottom:12px;line-height:1.6;background:var(--mint-pale);border-left:3px solid var(--mint-dark);padding:6px 10px}
-.recipe-ingredients,.recipe-steps{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:2}
-.recipe-ingredients li,.recipe-steps li{margin-bottom:2px}
-.recipe-section-label{font-family:'Press Start 2P';font-size:6px;color:var(--brown-light);margin:10px 0 6px}
-.prep-schedule{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.prep-day{background:var(--cream);border:2px solid var(--border);padding:10px 14px;box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;gap:12px}
-.prep-day-name{font-family:'Press Start 2P';font-size:6px;color:var(--terra-dark);min-width:70px;padding-top:2px}
-.prep-day-text{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown);line-height:1.6}
-.prep-day.highlight{border-color:var(--terra);background:var(--terra-pale)}
-.grocery-section{margin-top:4px}
-.grocery-category{margin-bottom:14px}
-.grocery-cat-label{font-family:'Press Start 2P';font-size:6px;color:var(--brown-light);margin-bottom:8px}
-.grocery-item{display:flex;align-items:center;gap:10px;background:var(--cream);border:2px solid var(--border);padding:9px 12px;margin-bottom:4px;cursor:pointer;transition:background .1s;box-shadow:var(--shadow-sm);user-select:none}
-.grocery-item:hover{background:var(--terra-pale)}
-.grocery-item.checked{background:var(--green-pale);border-color:var(--green);text-decoration:line-through;color:var(--brown-light)}
-.grocery-checkbox{width:20px;height:20px;border:2px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;box-shadow:var(--shadow-sm)}
-.grocery-item.checked .grocery-checkbox{background:var(--green);color:var(--parchment)}
-.grocery-item-name{font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown)}
-.grocery-clear-btn{font-family:'Press Start 2P';font-size:6px;padding:7px 12px;border:2px solid var(--border);background:var(--cream-dark);color:var(--brown-mid);cursor:pointer;box-shadow:var(--shadow-sm);margin-top:8px;transition:background .1s}
-.grocery-clear-btn:hover{background:var(--terra-pale)}
-.meal-panel{display:none}.meal-panel.active{display:block;animation:tip-fade .2s ease}
-@media(max-width:640px){
-  .hero{padding:28px 16px 18px}
-  .hero h1{font-size:12px}
-  .main,.progress-section{padding:0 10px 40px}
-  .window-body{padding:12px}
-  .milestones-grid{grid-template-columns:repeat(2,1fr)}
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  color: var(--brown);
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  margin: 0 auto;
+  height: 100%;
+  overflow: hidden;
 }
+
+/* ── HEADER ── */
+.app-hdr {
+  background: linear-gradient(150deg, var(--terra) 0%, var(--terra-dark) 100%);
+  padding: 14px 16px 12px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.app-hdr::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(-45deg, transparent 0, transparent 8px, rgba(255,255,255,.05) 8px, rgba(255,255,255,.05) 12px);
+  pointer-events: none;
+}
+.hdr-row { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+.hdr-greet { font-family: 'Press Start 2P', monospace; font-size: 6px; color: rgba(255,255,255,.7); letter-spacing: 1px; line-height: 2; }
+.hdr-name { font-family: 'Press Start 2P', monospace; font-size: 9px; color: #fff; margin-top: 2px; }
+.hdr-phase { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 3px; }
+.hdr-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.hdr-weather { background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: #fff; font-weight: 700; white-space: nowrap; }
+.hdr-location {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  border-radius: 20px; padding: 3px 10px;
+  font-family: 'Press Start 2P', monospace; font-size: 5px;
+  color: rgba(255,255,255,.9); cursor: pointer; white-space: nowrap;
+}
+.hdr-location:active { background: rgba(255,255,255,.3); }
+
+/* ── PANELS ── */
+.panels { flex: 1; overflow: hidden; position: relative; }
+.panel { display: none; height: 100%; overflow-y: auto; padding: 12px 12px 16px; }
+.panel.active { display: block; }
+
+/* ── BOTTOM NAV ── */
+.app-nav {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 6px 0 env(safe-area-inset-bottom, 10px);
+  display: flex;
+  justify-content: space-around;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 2px 6px; min-width: 52px; }
+.nav-icon { font-size: 20px; line-height: 1; }
+.nav-lbl { font-family: 'Press Start 2P', monospace; font-size: 4px; color: var(--brown-light); margin-top: 1px; }
+.nav-item.active .nav-lbl { color: var(--terra-dark); }
+.nav-dot { width: 4px; height: 4px; background: var(--terra); border-radius: 50%; margin-top: 2px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.card-body { padding: 14px; }
+.card-label { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--terra-dark); letter-spacing: 1px; margin-bottom: 8px; }
+.card-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+/* ── HERO CARD ── */
+.hero-card { position: relative; overflow: hidden; }
+.hero-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(224,133,118,.10) 0%, transparent 70%); }
+.hero-km { font-family: 'Press Start 2P', monospace; font-size: 38px; color: var(--brown); line-height: 1; }
+.hero-km span { font-size: 13px; color: var(--brown-light); margin-left: 4px; }
+.hero-meta { font-size: 12px; color: var(--brown-light); margin-top: 5px; }
+.hero-window { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hero-window-text { font-size: 11px; color: var(--brown-light); }
+.hero-card.long { background: var(--yellow-pale); border-color: var(--yellow-border); }
+.hero-card.long .card-label { color: var(--yellow); }
+.hero-card.long .hero-km { color: #6a4c00; }
+.hero-card.rest-card { background: var(--mint-pale); border-color: #b0ddd8; }
+.hero-card.rest-card .card-label { color: var(--mint-dark); }
+.rest-msg { font-size: 16px; font-weight: 800; color: var(--mint-dark); line-height: 1.5; padding: 4px 0 8px; }
+
+/* ── CHIPS ── */
+.chip { padding: 4px 9px; font-family: 'Press Start 2P', monospace; font-size: 5px; border-radius: 3px; white-space: nowrap; }
+.chip-mint { background: var(--mint-pale); border: 1px solid var(--mint); color: var(--mint-dark); }
+.chip-yellow { background: var(--yellow-pale); border: 1px solid var(--yellow-border); color: var(--yellow); }
+.chip-terra { background: var(--terra-pale); border: 1px solid var(--terra); color: var(--terra-dark); }
+.chip-green { background: var(--green-pale); border: 1px solid var(--green-border); color: var(--green); }
+.chip-grey { background: #f0f0f0; border: 1px solid #ddd; color: #aaa; }
+
+/* ── SIGNAL / INFO CARDS ── */
+.signal-card { background: var(--yellow-pale); border: 1px solid var(--yellow-border); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+.signal-label { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--yellow); letter-spacing: 1px; margin-bottom: 5px; }
+.signal-text { font-size: 12px; color: var(--brown-mid); line-height: 1.6; }
+.signal-text strong { color: #8a6800; font-weight: 800; }
+
+.grocery-banner { border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.grocery-banner.home { background: var(--green-pale); border: 1px solid var(--green-border); }
+.grocery-banner.travel { background: #f5f5f5; border: 1px solid #e0e0e0; }
+.grocery-banner-icon { font-size: 24px; flex-shrink: 0; }
+.grocery-banner-label { font-family: 'Press Start 2P', monospace; font-size: 5px; margin-bottom: 4px; }
+.grocery-banner.home .grocery-banner-label { color: var(--green); }
+.grocery-banner.travel .grocery-banner-label { color: #aaa; }
+.grocery-banner-text { font-size: 12px; color: var(--brown-mid); line-height: 1.5; }
+.grocery-banner.travel .grocery-banner-text { color: #aaa; }
+
+/* ── STAT TILES ── */
+.stat-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.tile { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow); padding: 10px 8px 8px; }
+.tile-label { font-family: 'Press Start 2P', monospace; font-size: 4px; color: var(--brown-light); letter-spacing: 1px; margin-bottom: 5px; }
+.tile-value { font-family: 'Press Start 2P', monospace; font-size: 14px; color: var(--brown); line-height: 1; }
+.tile-value span { font-size: 6px; color: var(--brown-light); }
+.tile-sub { font-size: 10px; color: var(--brown-light); margin-top: 3px; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: var(--terra);
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(224,133,118,.4);
+  padding: 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #fff;
+  letter-spacing: 1px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 4px;
+}
+.btn-primary:active { transform: scale(.98); }
+.btn-secondary {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--brown-mid);
+  letter-spacing: 1px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 6px;
+}
+.btn-secondary:active { background: var(--terra-pale); }
+
+/* ── PLAN PANEL ── */
+.window-bar-lite {
+  background: linear-gradient(90deg, var(--terra-dark), var(--terra));
+  padding: 8px 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-radius: 6px 6px 0 0;
+}
+.window-bar-title { font-family: 'Press Start 2P', monospace; font-size: 7px; color: #fff; }
+.done-pill { background: var(--green-pale); border: 1px solid var(--green-border); padding: 4px 10px; font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown); border-radius: 3px; }
+.checklist { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.check-item { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 11px 12px; cursor: pointer; transition: background .1s; user-select: none; }
+.check-item:active:not(.rest-day) { background: var(--terra-pale); }
+.check-item.done { background: var(--green-pale); border-color: var(--green-border); }
+.check-item.rest-day { background: #f5f5f5; border-color: #e8e8e8; cursor: default; opacity: .7; }
+.check-box { width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--border); border-radius: 4px; background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.check-item.done .check-box { background: var(--green); border-color: var(--green); color: #fff; }
+.check-item.rest-day .check-box { background: #e8e8e8; border-color: #ccc; color: #aaa; font-size: 10px; }
+.check-content { flex: 1; }
+.check-day { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown-light); margin-bottom: 2px; }
+.check-name { font-size: 14px; font-weight: 700; color: var(--brown); }
+.check-detail { font-size: 11px; color: var(--brown-mid); margin-top: 2px; line-height: 1.5; }
+.check-badge { font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 4px 7px; white-space: nowrap; flex-shrink: 0; border-radius: 3px; }
+.badge-run { background: var(--terra-pale); color: var(--brown); }
+.badge-cross { background: var(--mint-pale); color: var(--brown); }
+.badge-long { background: var(--yellow-pale); color: var(--brown); }
+.badge-rest { background: #f0f0f0; color: var(--brown-light); }
+.badge-race { background: var(--yellow-pale); color: var(--brown); }
+.streak-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.streak-pill { background: var(--card); border: 1px solid var(--border); padding: 5px 9px; font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--brown); border-radius: 3px; display: flex; align-items: center; gap: 4px; }
+.long-run-nudge { background: var(--yellow-pale); border: 2px solid var(--yellow-border); border-radius: 6px; padding: 10px 12px; margin-top: 8px; display: none; color: var(--brown); }
+
+/* ── CALENDAR ── */
+.cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cal-nav-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--terra); color: #fff; font-family: 'Press Start 2P', monospace; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cal-month-label { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--brown); }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.cal-day-header { background: var(--terra); border-radius: 3px; height: 28px; display: flex; align-items: center; justify-content: center; font-family: 'Press Start 2P', monospace; font-size: 6px; color: #fff; }
+.cal-cell { background: var(--card); border: 1px solid var(--border); border-radius: 4px; min-height: 56px; padding: 4px; }
+.cal-cell.today { border: 2px solid var(--terra-dark); }
+.cal-cell.other { opacity: .3; }
+.day-num { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown-light); }
+.cal-cell.today .day-num { color: var(--terra-dark); }
+.run-dot { margin-top: 2px; font-family: 'Nunito', sans-serif; font-size: 9px; padding: 1px 3px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid; border-radius: 2px; }
+.run-dot.easy { background: var(--terra-pale); color: var(--brown); border-color: var(--terra); }
+.run-dot.long { background: var(--yellow-pale); color: var(--brown); border-color: var(--yellow-border); }
+.run-dot.cross { background: var(--mint-pale); color: var(--brown); border-color: var(--mint); }
+.run-dot.rest { background: #f0f0f0; color: var(--brown-light); border-color: #ddd; }
+.run-dot.race { background: var(--yellow-pale); color: var(--brown); border-color: var(--yellow-border); }
+.cal-legend { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.cal-legend span { font-size: 11px; color: var(--brown-mid); display: flex; align-items: center; gap: 4px; }
+.cal-legend i { width: 14px; height: 7px; display: inline-block; border-radius: 2px; }
+
+/* ── MILES (BADGES) ── */
+.badges-section-label { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown-light); letter-spacing: 1px; padding: 4px 0 8px; }
+.badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.badge-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow); padding: 12px 10px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; }
+.badge-card.locked { opacity: .45; filter: grayscale(.5); }
+.badge-card.unlocked { border-color: var(--yellow-border); background: var(--yellow-pale); }
+.badge-emoji { font-size: 30px; line-height: 1; }
+.badge-name { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--brown); line-height: 1.7; }
+.badge-card.unlocked .badge-name { color: var(--yellow); }
+.badge-desc { font-size: 10px; color: var(--brown-light); line-height: 1.4; }
+.badge-status { font-family: 'Press Start 2P', monospace; font-size: 5px; padding: 3px 7px; border-radius: 2px; margin-top: 2px; }
+.badge-status.done { background: var(--yellow-pale); color: var(--yellow); border: 1px solid var(--yellow-border); }
+.badge-status.locked { background: var(--bg); color: var(--brown-light); border: 1px solid var(--border); }
+
+/* ── TIPS PANEL ── */
+.tip-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+.tip-dot { width: 10px; height: 10px; border: 2px solid var(--border); border-radius: 50%; background: #e8e8e8; cursor: pointer; }
+.tip-dot.active { background: var(--terra); border-color: var(--terra-dark); }
+.tip-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; box-shadow: var(--shadow); }
+.tip-icon { font-size: 32px; flex-shrink: 0; line-height: 1; }
+.tip-content { flex: 1; }
+.tip-week-label { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown-light); margin-bottom: 6px; }
+.tip-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--terra-dark); margin-bottom: 8px; line-height: 1.7; }
+.tip-body { font-size: 13px; color: var(--brown-mid); line-height: 1.8; }
+.tip-tag { display: inline-block; margin-top: 8px; font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 4px 8px; border: 1px solid var(--border); background: var(--bg); color: var(--brown-light); border-radius: 3px; }
+.tip-watch-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; background: #FF0000; border: none; border-radius: 4px;
+  padding: 6px 12px; font-family: 'Press Start 2P', monospace; font-size: 6px;
+  color: #fff; cursor: pointer; text-decoration: none;
+}
+.soreness-warning { background: var(--yellow-pale); border: 1px solid var(--yellow-border); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+.soreness-warning-label { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--yellow); margin-bottom: 5px; }
+.soreness-warning-text { font-size: 12px; color: var(--brown-mid); line-height: 1.6; }
+
+/* ── MEALS PANEL ── */
+.meal-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 14px; }
+.meal-tab { font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--brown-mid); cursor: pointer; }
+.meal-tab.active { background: var(--terra); color: #fff; border-color: var(--terra-dark); }
+.meal-panel { display: none; }
+.meal-panel.visible { display: block; }
+.meal-timeline { background: var(--yellow-pale); border: 1px solid var(--yellow-border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+.meal-timeline-title { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown-light); margin-bottom: 10px; }
+.meal-timeline-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.meal-time-chip { font-family: 'Press Start 2P', monospace; font-size: 7px; padding: 5px 9px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
+.meal-time-chip.terra { background: var(--terra); color: #fff; }
+.meal-time-chip.green { background: var(--green); color: #fff; }
+.meal-time-chip.mint { background: var(--mint); color: #fff; }
+.meal-time-text { font-size: 12px; color: var(--brown); line-height: 1.5; }
+.recipe-card { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+.recipe-card.visible { display: block; }
+.recipe-label { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--terra-dark); margin-bottom: 4px; }
+.recipe-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--brown); margin-bottom: 10px; line-height: 1.8; }
+.recipe-why { font-size: 12px; color: var(--brown-mid); margin-bottom: 10px; line-height: 1.6; background: var(--mint-pale); border-left: 3px solid var(--mint); padding: 6px 10px; border-radius: 0 4px 4px 0; }
+.recipe-section-label { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--brown-light); margin: 10px 0 5px; }
+.recipe-ingredients, .recipe-steps { font-size: 13px; color: var(--brown); line-height: 2; padding-left: 18px; }
+.recipe-ingredients li, .recipe-steps li { margin-bottom: 2px; }
+.recipe-week-badge { display: inline-block; font-family: 'Press Start 2P', monospace; font-size: 5px; padding: 3px 7px; border-radius: 3px; background: var(--terra-pale); border: 1px solid var(--terra); color: var(--terra-dark); margin-bottom: 10px; }
+.prep-schedule { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.prep-day { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 10px; }
+.prep-day.highlight { border-color: var(--terra); background: var(--terra-pale); }
+.prep-day-name { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--terra-dark); min-width: 68px; padding-top: 2px; }
+.prep-day-text { font-size: 13px; color: var(--brown); line-height: 1.6; }
+.grocery-category { margin-bottom: 14px; }
+.grocery-cat-label { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--brown-light); margin-bottom: 7px; }
+.grocery-item { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 9px 11px; margin-bottom: 4px; cursor: pointer; user-select: none; }
+.grocery-item.checked { background: var(--green-pale); border-color: var(--green-border); }
+.grocery-item.checked .grocery-item-name { text-decoration: line-through; color: var(--brown-light); }
+.grocery-checkbox { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.grocery-item.checked .grocery-checkbox { background: var(--green); border-color: var(--green); color: #fff; }
+.grocery-item-name { font-size: 13px; color: var(--brown); }
+.grocery-clear-btn { font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--brown-mid); cursor: pointer; margin-top: 6px; }
+
+/* ── UV chip ── */
+.uv-chip { display: inline-block; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); font-family: 'Press Start 2P', monospace; font-size: 7px; }
+.uv-low { background: var(--green-pale); color: var(--brown); }
+.uv-moderate { background: var(--yellow-pale); color: var(--brown); }
+.uv-high { background: #FFD7A8; color: var(--brown); }
+.uv-very-high { background: #FFBFA8; color: var(--brown); }
+.uv-extreme { background: var(--terra-pale); color: var(--brown); }
+.uv-now-marker { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-size: 10px; }
+.run-window-box { background: var(--mint-pale); border: 1px solid var(--mint); border-radius: 6px; padding: 10px 12px; margin-top: 10px; }
+.run-window-title { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--brown-light); margin-bottom: 6px; }
+.run-window-text { font-size: 12px; color: var(--brown); line-height: 1.8; }
+.uv-sparkline-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 6px 0; }
+.uv-sparkline-item { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
+
+/* ── LOG MODAL ── */
+#modal-overlay { display: none; position: fixed; inset: 0; background: rgba(77,67,60,.7); z-index: 200; align-items: flex-end; justify-content: center; }
+.modal-sheet { background: var(--card); border-radius: 16px 16px 0 0; width: 100%; max-width: 430px; padding: 0; overflow: hidden; max-height: 92vh; overflow-y: auto; }
+.modal-bar { background: linear-gradient(90deg, var(--terra-dark), var(--terra)); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+.modal-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: #fff; }
+.modal-close { width: 24px; height: 24px; border: none; border-radius: 50%; background: rgba(255,255,255,.3); font-size: 12px; cursor: pointer; color: #fff; font-weight: 700; }
+.modal-body { padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal-label { font-family: 'Press Start 2P', monospace; font-size: 6px; color: var(--brown-light); margin-bottom: 5px; }
+.modal-input { font-family: 'Nunito', sans-serif; font-size: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); padding: 10px 12px; color: var(--brown); outline: none; width: 100%; }
+.modal-input:focus { border-color: var(--terra); }
+.mood-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.mood-btn { font-family: 'Nunito', sans-serif; font-size: 13px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--brown); cursor: pointer; }
+.mood-btn.selected { background: var(--terra-pale); border-color: var(--terra); }
+
+/* condition chips */
+.condition-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.cond-chip { font-size: 12px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg); cursor: pointer; white-space: nowrap; color: var(--brown-mid); font-weight: 700; }
+.cond-chip.selected { border-color: var(--terra); background: var(--terra-pale); color: var(--terra-dark); }
+.cond-chip.sore-selected { border-color: #E8A050; background: #FFF0DC; color: #8a5500; }
+.soreness-row { display: none; }
+.soreness-row.visible { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.loc-chip { font-size: 12px; padding: 5px 10px; border: 1px solid #E8D0B0; border-radius: 20px; background: #FFF8F0; cursor: pointer; white-space: nowrap; color: #8a5500; font-weight: 700; }
+.loc-chip.selected { border-color: #E8A050; background: #FFDEB0; }
+
+/* ── LOCATION PICKER SHEET ── */
+#loc-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 300; align-items: flex-end; justify-content: center; }
+.loc-sheet { background: var(--card); border-radius: 16px 16px 0 0; width: 100%; max-width: 430px; padding: 0; }
+.loc-sheet-bar { background: linear-gradient(90deg, var(--terra-dark), var(--terra)); padding: 10px 16px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+.loc-sheet-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: #fff; }
+.loc-list { padding: 8px 0 24px; }
+.loc-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--brown); border-bottom: 1px solid var(--border); }
+.loc-item:last-child { border-bottom: none; }
+.loc-item:active { background: var(--terra-pale); }
+.loc-item.active { color: var(--terra-dark); }
+.loc-item .loc-check { margin-left: auto; color: var(--terra); font-size: 16px; }
+.loc-flag { font-size: 20px; }
+
+/* ── BONUS RUNS ── */
+.bonus-run-item { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.bonus-run-date { font-family: 'Press Start 2P', monospace; font-size: 5px; color: var(--brown-light); }
+.bonus-run-km { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--terra-dark); }
+.bonus-run-note { font-size: 11px; color: var(--brown-mid); margin-top: 2px; }
+
+/* ── MARQUEE (top of today) ── */
+.marquee-bar { background: var(--terra-dark); height: 28px; overflow: hidden; display: flex; align-items: center; flex-shrink: 0; }
+.marquee-bar span { font-family: 'Press Start 2P', monospace; font-size: 7px; color: rgba(255,255,255,.85); white-space: nowrap; padding: 0 16px; animation: marquee 32s linear infinite; display: inline-block; }
+@keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+/* ── PROGRESS BAR (plan panel) ── */
+.progress-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+.prog-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.prog-label { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--brown); }
+.prog-pct { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--terra-dark); }
+.capsule-wrap { background: #e0d8d0; border-radius: 20px; height: 22px; overflow: hidden; position: relative; }
+.capsule-fill { height: 100%; background: linear-gradient(90deg, var(--terra) 0%, #EFA090 60%, var(--terra) 100%); border-radius: 20px; transition: width .5s; }
+.capsule-label { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: 'Press Start 2P', monospace; font-size: 6px; color: #fff; }
+.week-chips { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 10px; }
+.week-chip { font-family: 'Press Start 2P', monospace; font-size: 5px; padding: 3px 5px; border: 1px solid var(--border); border-radius: 2px; }
+.week-chip.done { background: var(--terra-pale); color: var(--brown); }
+.week-chip.current { background: var(--yellow-pale); border-color: var(--yellow-border); color: var(--brown); }
+.week-chip.upcoming { background: #f0f0f0; color: var(--brown-light); }
+
+/* ── SCROLLBAR ── */
+.panel::-webkit-scrollbar { width: 4px; }
+.panel::-webkit-scrollbar-track { background: transparent; }
+.panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── WEATHER SECTION ── */
+.section-title { font-family: 'Press Start 2P', monospace; font-size: 7px; color: var(--brown-light); letter-spacing: 1px; margin: 14px 0 8px; }
 </style>
 </head>
 <body>
 
 <div class="marquee-bar">
-  <span id="marquee-text">♥ DEBBIE RUNS KOBE ♥ 42.195KM ♥ 15 NOV 2026 ♥ HAL HIGDON NOVICE 1 ♥ LOADING...</span>
+  <span id="marquee-text">♥ DEBBIE RUNS KOBE ♥ 42.195KM ♥ 15 NOV 2026 ♥ LOADING...</span>
 </div>
 
-<div class="hero">
-  <img class="avatar-hero" src="avatar_nobg.png" alt="Debbie">
-  <h1>DEBBIE RUNS KOBE</h1>
-  <p>Hal Higdon Novice 1 · 18 weeks · Race day: 15 Nov 2026<br>One training week at a time.</p>
-  <div class="hero-stats">
-    <div class="stat-pill"><strong id="stat-week">—</strong>/18 WEEKS</div>
-    <div class="stat-pill"><strong id="stat-km">—</strong>KM LOGGED</div>
-    <div class="stat-pill"><strong id="stat-days">—</strong>DAYS LEFT</div>
-    <div class="stat-pill"><strong id="stat-phase">—</strong></div>
+<!-- HEADER -->
+<div class="app-hdr">
+  <div class="hdr-row">
+    <div>
+      <div class="hdr-greet" id="hdr-greet">GOOD MORNING</div>
+      <div class="hdr-name">DEBBIE 🌸</div>
+      <div class="hdr-phase" id="hdr-phase">Loading...</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-weather" id="hdr-weather">— °C</div>
+      <div class="hdr-location" id="hdr-location-pill" onclick="openLocPicker()">📍 — ▾</div>
+    </div>
   </div>
 </div>
 
-<div class="progress-section">
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">♥ TRAINING_PROGRESS.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
+<!-- PANELS -->
+<div class="panels">
+
+  <!-- TODAY -->
+  <div class="panel active" id="panel-today">
+    <div id="today-hero-area"></div>
+    <div id="today-signal-area"></div>
+    <div id="today-grocery-area"></div>
+    <div class="stat-row">
+      <div class="tile"><div class="tile-label">WEEK</div><div class="tile-value" id="stat-week">—</div><div class="tile-sub">of 18</div></div>
+      <div class="tile"><div class="tile-label">KM THIS WK</div><div class="tile-value" id="stat-km-week">—</div><div class="tile-sub">logged</div></div>
+      <div class="tile"><div class="tile-label">TO KOBE</div><div class="tile-value" id="stat-days">—</div><div class="tile-sub">days</div></div>
     </div>
-    <div class="window-body">
-      <div class="speed-tier">
-        <div class="speed-tier-title" id="journey-title">YOUR JOURNEY ✦</div>
-        <div class="speed-animals" id="animal-strip"></div>
+    <div id="today-cta-area"></div>
+
+    <div class="section-title">☀️ WEATHER</div>
+    <div class="card"><div class="card-body" id="weather-widget-body"><div style="font-size:13px;color:var(--brown-mid)">Loading weather...</div></div></div>
+
+    <div class="section-title">✦ BONUS RUNS</div>
+    <div class="card">
+      <div class="card-body">
+        <div id="extra-runs-list" style="font-size:13px;color:var(--brown-mid)">No bonus runs yet.</div>
+        <button class="btn-secondary" onclick="openExtraModal()">+ LOG A BONUS RUN</button>
       </div>
-      <div class="prog-row" style="margin-top:16px">
-        <span class="prog-label" id="prog-label">LOADING...</span>
-        <span class="prog-pct" id="prog-pct">0%</span>
-      </div>
-      <div class="capsule-bar-wrap">
-        <div class="capsule-bar-fill" id="capsule-fill" style="width:0%"></div>
-        <span class="capsule-bar-label" id="capsule-label">WEEK 1 / 18</span>
-      </div>
-      <div class="week-track-row"><span class="week-track-label">WEEKLY SEGMENTS</span></div>
-      <div class="seg-track" id="seg-track"></div>
-      <div class="seg-labels" id="seg-labels">
-        <span class="seg-label">START</span>
-        <span class="seg-label">HALFWAY</span>
-        <span class="seg-label">TAPER</span>
-        <span class="seg-label">🏁 KOBE</span>
-      </div>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <div class="panel" id="panel-plan">
+    <div class="progress-card">
+      <div class="prog-row"><span class="prog-label" id="prog-label">LOADING...</span><span class="prog-pct" id="prog-pct">0%</span></div>
+      <div class="capsule-wrap"><div class="capsule-fill" id="capsule-fill" style="width:0%"></div><span class="capsule-label" id="capsule-label">W1/18</span></div>
       <div class="week-chips" id="week-chips"></div>
-      <div class="hearts-row">
-        <span class="heart-label">THIS WEEK</span>
-        <span id="hearts-container"></span>
+    </div>
+    <div class="card">
+      <div class="window-bar-lite">
+        <span class="window-bar-title" id="checklist-title">THIS WEEK</span>
+        <span class="done-pill" id="done-pill">0/0</span>
       </div>
-      <div class="dialogue-bubble">
-        <div class="dialogue-text" id="dialogue-text">Loading your training plan...<span class="cursor">▼</span></div>
+      <div class="card-body">
+        <div class="week-title" style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--terra-dark)" id="week-title">—</div>
+        <div style="font-size:11px;color:var(--brown-mid);margin-top:4px" id="week-subtitle">—</div>
+        <div class="long-run-nudge" id="long-run-nudge"></div>
+        <div class="checklist" id="checklist"></div>
+        <div class="streak-row" id="streak-row"></div>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="main">
-
-  <div class="window">
-    <div class="window-bar">
-      <span class="title" id="checklist-title">☑ THIS_WEEK.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
-    </div>
-    <div class="window-body">
-      <div class="week-header">
-        <div>
-          <div class="week-title" id="week-title">WEEK —</div>
-          <div class="week-subtitle" id="week-subtitle">Hal Higdon Novice 1</div>
+    <div class="card" style="margin-top:4px">
+      <div class="card-body">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+          <div class="cal-month-label" id="cal-month-label">—</div>
+          <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
         </div>
-        <div class="done-pill" id="done-pill">0 / 0 DONE</div>
-      </div>
-      <div id="long-run-nudge" style="display:none;background:var(--yellow);border:3px solid var(--border);padding:12px 16px;margin-bottom:12px;box-shadow:var(--shadow-sm);color:var(--brown)"></div>
-      <div class="checklist" id="checklist"></div>
-      <div class="streak-row" id="streak-row"></div>
-    </div>
-  </div>
-
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">📅 TRAINING_CALENDAR.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
-    </div>
-    <div class="window-body">
-      <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
-        <div class="cal-month-label" id="cal-month-label">—</div>
-        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <div class="cal-legend">
-        <span><i style="background:var(--terra)"></i> Easy run</span>
-        <span><i style="background:var(--yellow)"></i> Long run</span>
-        <span><i style="background:var(--mint-dark)"></i> Cross</span>
-        <span><i style="background:var(--cream-darker)"></i> Rest</span>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <span><i style="background:var(--terra)"></i>Easy</span>
+          <span><i style="background:var(--yellow-pale);border:1px solid var(--yellow-border)"></i>Long</span>
+          <span><i style="background:var(--mint-pale);border:1px solid var(--mint)"></i>Cross</span>
+          <span><i style="background:#f0f0f0;border:1px solid #ddd"></i>Rest</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">🏅 MILESTONES.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
+  <!-- MILES -->
+  <div class="panel" id="panel-miles">
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-body">
+        <div class="tile-label" style="margin-bottom:4px">TOTAL KM LOGGED</div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:28px;color:var(--terra-dark)" id="stat-km-total">0</div>
+        <div style="font-size:11px;color:var(--brown-light);margin-top:4px">Keep going — every km counts 🌸</div>
+      </div>
     </div>
-    <div class="window-body">
-      <div class="milestones-grid" id="milestones-grid"></div>
+    <div class="badges-section-label">UNLOCKED</div>
+    <div class="badge-grid" id="badges-unlocked"></div>
+    <div class="badges-section-label">COMING UP</div>
+    <div class="badge-grid" id="badges-locked"></div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="panel" id="panel-tips">
+    <div id="soreness-warning-area"></div>
+    <div class="tip-dots" id="tip-dots">
+      <div class="tip-dot active" onclick="showTip(0)"></div>
+      <div class="tip-dot" onclick="showTip(1)"></div>
+      <div class="tip-dot" onclick="showTip(2)"></div>
+    </div>
+    <div id="tip-of-week"></div>
+  </div>
+
+  <!-- MEALS -->
+  <div class="panel" id="panel-meals">
+    <div id="meal-nav" class="meal-tabs">
+      <button class="meal-tab active" onclick="showMealPanel('tonight')">⏰ TONIGHT</button>
+      <button class="meal-tab" onclick="showMealPanel('recipes')">🥢 RECIPES</button>
+      <button class="meal-tab" onclick="showMealPanel('schedule')">📅 PREP</button>
+      <button class="meal-tab" onclick="showMealPanel('groceries')">🛒 SHOP</button>
+    </div>
+    <div class="meal-panel visible" id="meal-panel-tonight">
+      <div class="meal-timeline">
+        <div class="meal-timeline-title">⏰ YOUR TIMELINE TODAY</div>
+        <div class="meal-timeline-row"><div class="meal-time-chip terra" id="meal-arrive-chip">6:30 PM</div><div class="meal-time-text">Arrive home. Assemble &amp; microwave prepped bowl.</div></div>
+        <div class="meal-timeline-row"><div class="meal-time-chip terra" id="meal-finish-chip">6:45 PM</div><div class="meal-time-text">Finish eating. Stay upright — digestion window begins.</div></div>
+        <div class="meal-timeline-row"><div class="meal-time-chip green" id="meal-run-chip">7:45 PM</div><div class="meal-time-text" id="meal-run-text">Start run — best UV window tonight.</div></div>
+        <div class="meal-timeline-row"><div class="meal-time-chip mint" id="meal-done-chip">8:10 PM</div><div class="meal-time-text">Finish run. Hydrate, small recovery snack.</div></div>
+      </div>
+      <div class="run-window-box">
+        <div class="run-window-title">💡 WHY THIS TIMING WORKS</div>
+        <div class="run-window-text">45–60 min between eating and running prevents acid reflux. Evening running keeps UV at zero. Brown rice's low GI releases glucose gradually — fuel for your run, no insulin spike.</div>
+      </div>
+      <div class="section-title" style="margin-top:14px">🍽️ TONIGHT'S RECIPE</div>
+      <div id="tonight-recipe-preview"></div>
+    </div>
+    <div class="meal-panel" id="meal-panel-recipes">
+      <div class="meal-tabs" id="recipe-nav">
+        <button class="meal-tab active" onclick="showRecipe('rotation')">🔄 THIS WEEK</button>
+        <button class="meal-tab" onclick="showRecipe('base')">🌾 BASE</button>
+        <button class="meal-tab" onclick="showRecipe('chicken')">🍗</button>
+        <button class="meal-tab" onclick="showRecipe('tofu')">🧊</button>
+        <button class="meal-tab" onclick="showRecipe('fish')">🐟</button>
+        <button class="meal-tab" onclick="showRecipe('congee')">🍚</button>
+        <button class="meal-tab" onclick="showRecipe('egg')">🥚</button>
+        <button class="meal-tab" onclick="showRecipe('sweet-potato')">🍠</button>
+        <button class="meal-tab" onclick="showRecipe('travel')">✈️</button>
+      </div>
+      <div id="recipe-area"></div>
+    </div>
+    <div class="meal-panel" id="meal-panel-schedule">
+      <div style="font-size:13px;color:var(--brown-mid);margin-bottom:12px;line-height:1.8"><strong>15 min hands-on Sunday = zero cooking Mon–Fri.</strong> Oven and rice cooker run unattended.</div>
+      <div class="prep-schedule">
+        <div class="prep-day"><div class="prep-day-name">SATURDAY</div><div class="prep-day-text">🛒 Grocery pickup — 20 min. Do it Saturday so Sunday is free.</div></div>
+        <div class="prep-day highlight">
+          <div class="prep-day-name">SUNDAY</div>
+          <div class="prep-day-text">🍳 <strong>15 min hands-on. Runs in parallel.</strong><br><br>Min 1–3: Rinse rice, add ginger, press start on rice cooker. Place bok choy on steam tray.<br>Min 4–8: Season chicken/tofu. Preheat oven, put it in.<br>Min 9–10: Add sweet potatoes to steam tray.<br>Min 11–15: Pack 5 containers while everything finishes.<br><br>Oven and rice cooker run unattended. Walk away.</div>
+        </div>
+        <div class="prep-day"><div class="prep-day-name">MON–TUES</div><div class="prep-day-text">🍱 Grab a container, microwave 3 min. No cooking.</div></div>
+        <div class="prep-day"><div class="prep-day-name">WEDNESDAY</div><div class="prep-day-text">🐟 Steamed fish — 10 min start to finish. Microwave batch rice alongside.</div></div>
+        <div class="prep-day"><div class="prep-day-name">THURS–FRI</div><div class="prep-day-text">🍱 Last batch containers. Or quick congee — 12 min using leftover rice.</div></div>
+        <div class="prep-day"><div class="prep-day-name">LONG RUN</div><div class="prep-day-text">🏃 Within 30 min of finishing: microwave a batch container. Rice + protein = recovery window covered.</div></div>
+      </div>
+      <div class="run-window-box"><div class="run-window-title">💡 2-MIN FLAVOUR TRICK</div><div class="run-window-text">Same bowl — different condiment drizzle — feels like a different meal every night. Soy sauce, sesame oil, any vinegar. No extra cooking.</div></div>
+    </div>
+    <div class="meal-panel" id="meal-panel-groceries">
+      <div style="font-size:13px;color:var(--brown-mid);margin-bottom:12px;line-height:1.8">Your weekly Saturday shop. Tap to check off as you go.</div>
+      <div id="grocery-list"></div>
+      <button class="grocery-clear-btn" onclick="clearGroceries()">↺ RESET LIST</button>
     </div>
   </div>
 
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">✦ BONUS_RUNS.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
-    </div>
-    <div class="window-body">
-      <div style="font-family:'Press Start 2P';font-size:7px;color:var(--brown-light);margin-bottom:10px">Extra runs outside your scheduled plan</div>
-      <div class="checklist" id="extra-runs-list"></div>
-      <button class="add-extra-btn" onclick="openExtraModal()">+ ADD BONUS RUN ✦</button>
-    </div>
+</div><!-- /panels -->
+
+<!-- BOTTOM NAV -->
+<nav class="app-nav">
+  <div class="nav-item active" id="nav-today" onclick="switchPanel('today')">
+    <div class="nav-icon">🏠</div><div class="nav-lbl">TODAY</div><div class="nav-dot" id="nav-dot-today"></div>
   </div>
-
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">☀️ WEATHER.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
-    </div>
-    <div class="window-body" id="weather-widget-body">
-      <div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid)">Loading weather...</div>
-    </div>
+  <div class="nav-item" id="nav-plan" onclick="switchPanel('plan')">
+    <div class="nav-icon">📅</div><div class="nav-lbl">PLAN</div>
   </div>
-
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">🍱 MEAL_PREP.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
-    </div>
-    <div class="window-body">
-
-      <!-- Sub-nav -->
-      <div id="meal-nav" style="display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap">
-        <button class="meal-tab active" onclick="showMealPanel('tonight')">⏰ TONIGHT</button>
-        <button class="meal-tab" onclick="showMealPanel('recipes')">🥢 RECIPES</button>
-        <button class="meal-tab" onclick="showMealPanel('schedule')">📅 PREP SCHEDULE</button>
-        <button class="meal-tab" onclick="showMealPanel('groceries')">🛒 GROCERIES</button>
-      </div>
-
-      <!-- Tonight panel -->
-      <div class="meal-panel active" id="meal-panel-tonight">
-        <div class="meal-timeline">
-          <div class="meal-timeline-title">⏰ YOUR TIMELINE TODAY</div>
-          <div class="meal-timeline-row">
-            <div class="meal-time-chip" id="meal-arrive-chip">6:30 PM</div>
-            <div class="meal-time-text">Arrive home. Assemble &amp; microwave prepped bowl (or start 10-min fish).</div>
-          </div>
-          <div class="meal-timeline-row">
-            <div class="meal-time-chip" id="meal-finish-chip">6:45 PM</div>
-            <div class="meal-time-text">Finish eating. Stay upright — digestion window begins.</div>
-          </div>
-          <div class="meal-timeline-row">
-            <div class="meal-time-chip green" id="meal-run-chip">7:45 PM</div>
-            <div class="meal-time-text" id="meal-run-text">Start 3km jog — UV safe window based on today's forecast.</div>
-          </div>
-          <div class="meal-timeline-row">
-            <div class="meal-time-chip mint" id="meal-done-chip">8:10 PM</div>
-            <div class="meal-time-text">Finish run. Cool down, hydrate, small recovery snack if hungry.</div>
-          </div>
-        </div>
-        <div class="run-window-box">
-          <div class="run-window-title">💡 WHY THIS TIMING WORKS</div>
-          <div class="run-window-text">
-            45–60 min between eating and running prevents acid reflux while giving your body fuel to burn.
-            Evening running (after 7:30 PM) keeps UV exposure to zero. Brown rice's low glycemic index means
-            glucose releases gradually — your muscles absorb it as fuel during the run, naturally flattening the insulin spike.
-          </div>
-        </div>
-      </div>
-
-      <!-- Recipes panel -->
-      <div class="meal-panel" id="meal-panel-recipes">
-        <div class="meal-tabs">
-          <button class="meal-tab active" onclick="showRecipe('base')">🌾 BASE</button>
-          <button class="meal-tab" onclick="showRecipe('chicken')">🍗 CHICKEN</button>
-          <button class="meal-tab" onclick="showRecipe('tofu')">🧊 TOFU</button>
-          <button class="meal-tab" onclick="showRecipe('fish')">🐟 FISH</button>
-          <button class="meal-tab" onclick="showRecipe('congee')">🍚 CONGEE</button>
-          <button class="meal-tab" onclick="showRecipe('egg')">🥚 STEAMED EGG</button>
-          <button class="meal-tab" onclick="showRecipe('sweet-potato')">🍠 SWEET POTATO</button>
-          <button class="meal-tab" onclick="showRecipe('travel')">✈️ TRAVELLING</button>
-        </div>
-
-        <div class="recipe-card visible" id="recipe-base">
-          <div class="recipe-label">SUNDAY · 3 MIN HANDS-ON · RICE COOKER DOES THE REST</div>
-          <div class="recipe-title">GINGER RICE + BOK CHOY BASE</div>
-          <div class="recipe-why">Set it and forget it. Rice cooker runs unattended while you do anything else. Ginger in the water prevents reflux during the run. Makes 5 portions — this is the only cooking you do for the whole week.</div>
-          <div class="recipe-section-label">RICE (2 min)</div>
-          <ul class="recipe-ingredients">
-            <li>Rinse 2 cups brown rice, add to cooker</li>
-            <li>Drop in 2–3 slices of fresh ginger — done, press start</li>
-          </ul>
-          <div class="recipe-section-label">VEGGIES (1 min to prep, 5 min steam)</div>
-          <ul class="recipe-ingredients">
-            <li>Halve a bag of baby bok choy, throw in the rice cooker steam tray above the rice</li>
-            <li>Cooks at the same time — zero extra pots</li>
-            <li>Drizzle sesame oil + sesame seeds when done</li>
-          </ul>
-          <div class="recipe-section-label">WEEKNIGHT USE</div>
-          <ul class="recipe-ingredients">
-            <li>Grab a container from the fridge, microwave 2–3 min — meal done</li>
-            <li>Add soy sauce + sesame oil at the table to keep it feeling fresh each night</li>
-          </ul>
-        </div>
-
-        <div class="recipe-card" id="recipe-chicken">
-          <div class="recipe-label">SUNDAY · 5 MIN HANDS-ON · OVEN DOES THE REST</div>
-          <div class="recipe-title">SOY-SESAME CHICKEN BREAST</div>
-          <div class="recipe-why">5 min to season, 25 min the oven does everything. You walk away. Lean chicken avoids the fat that triggers reflux — and soy + sesame is a Taiwanese pantry flavour you already know.</div>
-          <div class="recipe-section-label">DO THIS WHILE RICE COOKS</div>
-          <ol class="recipe-steps">
-            <li>Preheat oven to 400°F / 200°C</li>
-            <li>Put 1.5–2 lbs chicken breasts in a baking dish</li>
-            <li>Pour over: 2 tbsp soy sauce, 1 tsp sesame oil, pinch white pepper</li>
-            <li>Put in oven. Set timer 25 min. Walk away</li>
-            <li>Cool, slice, divide into 5 containers with rice + veg</li>
-          </ol>
-          <div class="recipe-section-label">FLAVOUR SWITCH (no extra time)</div>
-          <ul class="recipe-ingredients">
-            <li>Splash of any dry cooking wine or apple cider vinegar = deeper flavour</li>
-            <li>Pinch of mixed spice or cinnamon = warmth without specialist spices</li>
-          </ul>
-        </div>
-
-        <div class="recipe-card" id="recipe-tofu">
-          <div class="recipe-label">SUNDAY · 5 MIN HANDS-ON · OR WEEKNIGHT 8-MIN PAN</div>
-          <div class="recipe-title">SOY-GINGER TOFU</div>
-          <div class="recipe-why">Tofu is alkaline — it actively calms acid reflux. Two ways to cook it: batch in the oven Sunday (hands-off), or quick-pan on a weeknight if you want something fresh and hot in under 10 min.</div>
-          <div class="recipe-section-label">SUNDAY BATCH (5 min hands-on, oven does rest)</div>
-          <ol class="recipe-steps">
-            <li>Cube 2 blocks extra-firm tofu — no pressing needed if you buy firm enough</li>
-            <li>Toss with: 2 tbsp soy sauce, 1 tsp sesame oil, 1 tsp grated ginger</li>
-            <li>Spread on a tray, bake 400°F / 200°C for 25 min alongside the chicken</li>
-          </ol>
-          <div class="recipe-section-label">WEEKNIGHT PAN (8 min, all hands-on)</div>
-          <ol class="recipe-steps">
-            <li>Slice tofu into planks, pat dry with paper towel</li>
-            <li>Pan on medium-high, tiny splash of sesame oil</li>
-            <li>3 min each side until golden — pour soy + ginger over, 1 min more</li>
-          </ol>
-        </div>
-
-        <div class="recipe-card" id="recipe-fish">
-          <div class="recipe-label">WEEKNIGHT · 10 MIN TOTAL · NO OVEN</div>
-          <div class="recipe-title">STEAMED WHITE FISH</div>
-          <div class="recipe-why">Fastest protein of the week. White fish digests in 30 min — you can eat later than usual and still run comfortably. Zero prep beyond placing it on a plate.</div>
-          <div class="recipe-section-label">METHOD (10 min start to eat)</div>
-          <ol class="recipe-steps">
-            <li>Boil water in a pot or wok with a steamer rack</li>
-            <li>Place fish fillet on a heatproof plate</li>
-            <li>Lay ginger strips + scallion on top, drizzle 1 tbsp soy sauce + tiny sesame oil</li>
-            <li>Steam 7–9 min — done when it flakes with a chopstick</li>
-            <li>Microwave a rice portion from the batch while fish steams</li>
-          </ol>
-          <div class="recipe-section-label">OPTIONAL FLAVOUR (30 sec)</div>
-          <ul class="recipe-ingredients">
-            <li>A few drops of white wine or lemon juice before steaming removes fishiness</li>
-            <li>Any white fish works — cod, tilapia, haddock, sole, whatever's fresh locally</li>
-          </ul>
-        </div>
-
-        <div class="recipe-card" id="recipe-congee">
-          <div class="recipe-label">WEEKNIGHT · 12 MIN · USES LEFTOVER RICE</div>
-          <div class="recipe-title">QUICK CONGEE (粥)</div>
-          <div class="recipe-why">The fastest hot meal on a tired night. Liquid base digests even quicker than solid rice — eat at 7:00 PM and run at 7:30 PM comfortably. Uses your Sunday batch rice so there's nothing new to cook.</div>
-          <div class="recipe-section-label">METHOD (12 min)</div>
-          <ol class="recipe-steps">
-            <li>Add 1 portion leftover rice + 2 cups stock to a small pot</li>
-            <li>Bring to boil, simmer 10 min — stir occasionally, it breaks down fast</li>
-            <li>Stir in any shredded chicken or tofu from your batch containers</li>
-            <li>Top with green onion + white pepper — done</li>
-          </ol>
-          <div class="recipe-section-label">WHY THIS BEATS SOLID RICE ON TIRED NIGHTS</div>
-          <ul class="recipe-ingredients">
-            <li>Faster digestion = shorter wait before your run</li>
-            <li>Warming + comforting — feels like a real cooked meal</li>
-          </ul>
-        </div>
-
-        <div class="recipe-card" id="recipe-egg">
-          <div class="recipe-label">WEEKNIGHT · 12 MIN · HANDS-OFF ONCE STEAMING</div>
-          <div class="recipe-title">TAIWANESE STEAMED EGG (蒸蛋)</div>
-          <div class="recipe-why">2 min to mix, 10 min to steam unattended. Pure protein, zero fat, silky texture. Perfect on low-mileage nights when you want something lighter. Classic Taiwanese weeknight food.</div>
-          <div class="recipe-section-label">METHOD</div>
-          <ol class="recipe-steps">
-            <li>Beat 3 eggs + 1.5 cups warm stock + 1 tsp soy sauce in a bowl</li>
-            <li>Cover with a plate or cling wrap</li>
-            <li>Steam on LOW for 10–12 min — do not let it boil hard or it goes bubbly</li>
-            <li>Drizzle sesame oil + green onion to finish</li>
-          </ol>
-        </div>
-
-        <div class="recipe-card" id="recipe-sweet-potato">
-          <div class="recipe-label">SUNDAY · 2 MIN HANDS-ON · STEAM TRAY IN RICE COOKER</div>
-          <div class="recipe-title">STEAMED SWEET POTATO (地瓜)</div>
-          <div class="recipe-why">Drop them in the rice cooker steam tray while your rice cooks — zero extra effort. Lower GI than rice, naturally alkaline (great for reflux), and feels like a treat. Swap in whenever you want variety.</div>
-          <div class="recipe-section-label">METHOD</div>
-          <ol class="recipe-steps">
-            <li>Wash 2–3 sweet potatoes, halve them — no peeling needed</li>
-            <li>Place on the rice cooker steam tray above the rice</li>
-            <li>Done when rice is done — takes the same time</li>
-          </ol>
-          <div class="recipe-section-label">WEEKNIGHT USE</div>
-          <ul class="recipe-ingredients">
-            <li>Cold from the fridge — just microwave 90 sec</li>
-            <li>Mash one half with a fork, top with batch chicken or tofu — done</li>
-            <li>Cold sweet potato has even lower GI (resistant starch) — fine to eat straight from fridge</li>
-          </ul>
-        </div>
-
-        <div class="recipe-card" id="recipe-travel">
-          <div class="recipe-label">TRAVELLING · NO BATCH COOK · SUPERMARKET ANYWHERE</div>
-          <div class="recipe-title">EUROPE TRAVEL MEALS</div>
-          <div class="recipe-why">Every supermarket in Europe stocks these. No specialist ingredients, no rice cooker needed. All under 15 min. The only rule: eat 45–60 min before your run, keep it low-fat and low-acid.</div>
-
-          <div class="recipe-section-label">OPTION 1 — PASTA + TUNA (10 MIN)</div>
-          <ul class="recipe-ingredients">
-            <li>Boil pasta (any shape) — 8–10 min</li>
-            <li>Drain, top with a tin of tuna in spring water (not oil), drizzle of olive oil, black pepper</li>
-            <li>Why it works: pasta is a slow-release carb, tuna is lean fast-digesting protein, zero acid</li>
-          </ul>
-
-          <div class="recipe-section-label">OPTION 2 — EGGS + TOAST (8 MIN)</div>
-          <ul class="recipe-ingredients">
-            <li>2–3 scrambled or poached eggs on wholegrain toast</li>
-            <li>No butter on the toast — reflux trigger. Olive oil drizzle instead</li>
-            <li>Why it works: eggs digest quickly, wholegrain toast is low GI</li>
-          </ul>
-
-          <div class="recipe-section-label">OPTION 3 — RICE PACKET + CHICKEN (5 MIN)</div>
-          <ul class="recipe-ingredients">
-            <li>Microwave rice packet (Uncle Ben's style — every European supermarket has these)</li>
-            <li>Top with rotisserie chicken from the deli counter — just pull the breast meat off</li>
-            <li>Drizzle soy sauce if you have it, or just black pepper + lemon</li>
-            <li>Why it works: zero cooking skill needed, same macros as your batch bowl at home</li>
-          </ul>
-
-          <div class="recipe-section-label">OPTION 4 — GREEK YOGHURT + OATS (3 MIN, NO HEAT)</div>
-          <ul class="recipe-ingredients">
-            <li>Bowl of oats (soak in cold water 5 min if no microwave) + plain Greek yoghurt</li>
-            <li>Banana or berries on top</li>
-            <li>Best for: hotel rooms, no kitchen at all, morning long run days</li>
-            <li>Note: eat this 60 min before running — dairy needs a little longer to settle</li>
-          </ul>
-
-          <div class="recipe-section-label">WHAT TO KEEP IN YOUR BAG</div>
-          <ul class="recipe-ingredients">
-            <li>Small bottle of soy sauce — makes any plain protein taste like home</li>
-            <li>Sesame oil sachet or small bottle — 1 tsp transforms a microwave rice packet</li>
-            <li>These fit in a carry-on, last the whole trip, available in Asian grocery shops across Europe</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Prep schedule panel -->
-      <div class="meal-panel" id="meal-panel-schedule">
-        <div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);margin-bottom:14px;line-height:1.8">
-          <strong>15 min of hands-on cooking Sunday = zero cooking Mon–Fri.</strong> The oven and rice cooker do everything else while you get on with your life.
-        </div>
-        <div class="prep-schedule">
-          <div class="prep-day">
-            <div class="prep-day-name">SATURDAY</div>
-            <div class="prep-day-text">🛒 Grocery pickup — 20 min. Do it Saturday so Sunday is free.</div>
-          </div>
-          <div class="prep-day highlight">
-            <div class="prep-day-name">SUNDAY</div>
-            <div class="prep-day-text">
-              🍳 <strong>15 min hands-on. Everything runs in parallel.</strong><br>
-              <br>
-              Min 1–3: Rinse rice, add ginger, press start on rice cooker. Place bok choy on steam tray above.<br>
-              Min 4–8: Season chicken (or tofu) in a baking dish. Preheat oven, put it in.<br>
-              Min 9–10: Halve sweet potatoes, add to rice cooker steam tray.<br>
-              Min 11–15: Pack 5 containers while everything finishes.<br>
-              <br>
-              Oven and rice cooker run unattended. You walk away.
-            </div>
-          </div>
-          <div class="prep-day">
-            <div class="prep-day-name">MON–TUES</div>
-            <div class="prep-day-text">🍱 Grab a container, microwave 3 min → eat → run. No cooking.</div>
-          </div>
-          <div class="prep-day">
-            <div class="prep-day-name">WEDNESDAY</div>
-            <div class="prep-day-text">🐟 Steamed fish — 10 min start to finish. Microwave batch rice alongside. One pot, no mess.</div>
-          </div>
-          <div class="prep-day">
-            <div class="prep-day-name">THURS–FRI</div>
-            <div class="prep-day-text">🍱 Last batch containers. Or quick congee if you want something warm — 12 min using leftover rice.</div>
-          </div>
-          <div class="prep-day">
-            <div class="prep-day-name">LONG RUN DAY</div>
-            <div class="prep-day-text">🏃 Within 30 min of finishing: microwave a batch container — rice + protein covers the 3:1 recovery window. No cooking needed.</div>
-          </div>
-        </div>
-        <div class="run-window-box">
-          <div class="run-window-title">💡 THE 2-MIN FLAVOUR TRICK</div>
-          <div class="run-window-text">
-            Keep soy sauce, sesame oil, and any vinegar on your counter.
-            Same batch bowl — different condiment drizzle — feels like a different meal every night. No extra cooking.
-          </div>
-        </div>
-      </div>
-
-      <!-- Groceries panel -->
-      <div class="meal-panel" id="meal-panel-groceries">
-        <div style="font-family:'Nunito',sans-serif;font-size:13px;color:var(--brown-mid);margin-bottom:14px;line-height:1.8">
-          Your weekly Saturday shop. Tap to check off as you go.
-        </div>
-        <div class="grocery-section" id="grocery-list"></div>
-        <button class="grocery-clear-btn" onclick="clearGroceries()">↺ RESET LIST</button>
-      </div>
-
-    </div>
+  <div class="nav-item" id="nav-miles" onclick="switchPanel('miles')">
+    <div class="nav-icon">🏅</div><div class="nav-lbl">MILES</div>
   </div>
-
-  <div class="window">
-    <div class="window-bar">
-      <span class="title">📖 WEEKLY_TIP.EXE</span>
-      <div class="window-btns"><div class="win-btn">_</div><div class="win-btn">□</div><div class="win-btn">✕</div></div>
-    </div>
-    <div class="window-body">
-      <div class="tip-dots" id="tip-dots">
-        <div class="tip-dot active" onclick="showTip(0)"></div>
-        <div class="tip-dot" onclick="showTip(1)"></div>
-        <div class="tip-dot" onclick="showTip(2)"></div>
-      </div>
-      <div class="tip-of-week" id="tip-of-week"></div>
-    </div>
+  <div class="nav-item" id="nav-tips" onclick="switchPanel('tips')">
+    <div class="nav-icon">💡</div><div class="nav-lbl">TIPS</div>
   </div>
-
-</div>
+  <div class="nav-item" id="nav-meals" onclick="switchPanel('meals')">
+    <div class="nav-icon">🍱</div><div class="nav-lbl">MEALS</div>
+  </div>
+</nav>
 
 <!-- LOG RUN MODAL -->
-<div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(77,67,60,.7);z-index:200;align-items:center;justify-content:center;padding:20px">
-  <div style="background:var(--parchment);border:3px solid var(--border);box-shadow:var(--shadow);max-width:380px;width:100%;padding:0;overflow:hidden">
-    <div style="background:linear-gradient(90deg,var(--terra-dark),var(--terra));border-bottom:3px solid var(--border);padding:9px 14px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-family:'Press Start 2P';font-size:8px;color:var(--parchment);text-shadow:1px 1px 0 var(--border)">📝 LOG_RUN.EXE</span>
-      <button onclick="closeModal()" style="width:18px;height:18px;border:2px solid var(--border);background:var(--cream);font-size:9px;cursor:pointer;font-weight:700;font-family:monospace">✕</button>
+<div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(77,67,60,.7);z-index:200;align-items:flex-end;justify-content:center">
+  <div class="modal-sheet">
+    <div class="modal-bar">
+      <span class="modal-title">📝 LOG RUN</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
-      <div id="modal-day-label" style="font-family:'Press Start 2P';font-size:8px;color:var(--terra-dark)"></div>
-
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <label style="font-family:'Press Start 2P';font-size:7px;color:var(--brown-light)">ACTUAL KM RUN</label>
-        <input id="modal-km" type="number" step="0.1" min="0" placeholder="e.g. 5.2"
-          style="font-family:'Nunito',sans-serif;font-size:16px;border:2px solid var(--border);background:var(--cream);padding:10px 12px;color:var(--brown);outline:none;width:100%;box-shadow:var(--shadow-sm)">
+    <div class="modal-body">
+      <div id="modal-day-label" style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--terra-dark)"></div>
+      <div>
+        <div class="modal-label">ACTUAL KM RUN</div>
+        <input id="modal-km" class="modal-input" type="number" step="0.1" min="0" placeholder="e.g. 5.2">
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <label style="font-family:'Press Start 2P';font-size:7px;color:var(--brown-light)">HOW DID IT FEEL?</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap" id="mood-picker">
+      <div>
+        <div class="modal-label">HOW DID IT FEEL?</div>
+        <div class="mood-btns">
           <button class="mood-btn" data-mood="💪" onclick="selectMood(this)">💪 Strong</button>
           <button class="mood-btn" data-mood="😊" onclick="selectMood(this)">😊 Good</button>
           <button class="mood-btn" data-mood="😐" onclick="selectMood(this)">😐 Okay</button>
           <button class="mood-btn" data-mood="😩" onclick="selectMood(this)">😩 Tough</button>
         </div>
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <label style="font-family:'Press Start 2P';font-size:7px;color:var(--brown-light)">NOTES (optional)</label>
-        <textarea id="modal-notes" rows="2" placeholder="anything worth remembering..."
-          style="font-family:'Nunito',sans-serif;font-size:14px;border:2px solid var(--border);background:var(--cream);padding:10px 12px;color:var(--brown);outline:none;resize:none;box-shadow:var(--shadow-sm)"></textarea>
+      <div>
+        <div class="modal-label">BODY FEEL</div>
+        <div class="condition-chips">
+          <div class="cond-chip" data-cond="fresh" onclick="selectCond(this)">✨ Fresh</div>
+          <div class="cond-chip" data-cond="tired" onclick="selectCond(this)">😴 Tired</div>
+          <div class="cond-chip" data-cond="sore" onclick="selectCond(this, true)">💢 Sore…</div>
+        </div>
+        <div class="soreness-row" id="soreness-row">
+          <div class="loc-chip" data-loc="heels" onclick="toggleSoreLoc(this)">👣 Heels</div>
+          <div class="loc-chip" data-loc="calves" onclick="toggleSoreLoc(this)">🦵 Calves</div>
+          <div class="loc-chip" data-loc="knees" onclick="toggleSoreLoc(this)">🦴 Knees</div>
+          <div class="loc-chip" data-loc="shins" onclick="toggleSoreLoc(this)">🦴 Shins</div>
+          <div class="loc-chip" data-loc="hips" onclick="toggleSoreLoc(this)">🏃 Hips</div>
+        </div>
       </div>
-
-      <button onclick="submitRun()"
-        style="background:var(--terra);color:var(--parchment);border:3px solid var(--border);padding:12px;font-family:'Press Start 2P';font-size:9px;cursor:pointer;box-shadow:var(--shadow);letter-spacing:1px;text-shadow:1px 1px 0 var(--border)">
-        SAVE RUN ✦
-      </button>
+      <div>
+        <div class="modal-label">STOMACH</div>
+        <div class="condition-chips">
+          <div class="cond-chip" data-cond="stomach-fine" onclick="selectCond(this)">👍 Fine</div>
+          <div class="cond-chip" data-cond="stomach-rough" onclick="selectCond(this)">😬 A bit rough</div>
+        </div>
+      </div>
+      <div>
+        <div class="modal-label">NOTES (optional)</div>
+        <textarea id="modal-notes" class="modal-input" rows="2" placeholder="anything worth remembering..." style="resize:none"></textarea>
+      </div>
+      <button onclick="submitRun()" class="btn-primary">SAVE RUN ✦</button>
     </div>
   </div>
 </div>
 
-<footer id="footer-text">♥ DEBBIE RUNS KOBE · HAL HIGDON NOVICE 1 · 15 NOV 2026 · 42.195KM ♥</footer>
+<!-- LOCATION PICKER -->
+<div id="loc-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center">
+  <div class="loc-sheet">
+    <div class="loc-sheet-bar">
+      <span class="loc-sheet-title">📍 SELECT LOCATION</span>
+      <button class="modal-close" onclick="closeLocPicker()">✕</button>
+    </div>
+    <div class="loc-list" id="loc-list"></div>
+  </div>
+</div>
+
+<!-- STRETCH BOTTOM SHEET -->
+<div id="stretch-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:flex-end;justify-content:center">
+  <div class="modal-sheet" style="max-height:80vh">
+    <div class="modal-bar">
+      <span class="modal-title" id="stretch-title">STRETCH GUIDE</span>
+      <button class="modal-close" onclick="closeStretch()">✕</button>
+    </div>
+    <div class="modal-body" id="stretch-body"></div>
+  </div>
+</div>
 
 <script src="app.js"></script>
-<script>
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
 </body>
 </html>
