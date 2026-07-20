@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kobe App — Final Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #e8ddd4; font-family: 'Nunito', sans-serif; padding: 32px 16px 48px; }
+
+:root {
+  --parchment: #FAF5EE;
+  --cream: #F1CCAA; --cream-dark: #E8B990;
+  --brown: #4D433C; --brown-mid: #7A6458; --brown-light: #B0988A;
+  --terra: #E08576; --terra-dark: #C06858; --terra-pale: #F5D0C8;
+  --mint: #5CA89E; --mint-dark: #3D8C82; --mint-pale: #DFF3EF;
+  --yellow: #C89A18; --yellow-pale: #FDF3D0; --yellow-border: #E8D090;
+  --green: #5A9E68; --green-pale: #D0EDCC; --green-border: #A0D0A8;
+  --card: #FFFFFF; --border: #E4D8CC;
+  --bg: #FAF5EE;
+}
+
+h1 { color: var(--terra-dark); font-family: 'Press Start 2P', monospace; font-size: 9px; text-align: center; margin-bottom: 6px; line-height: 2; }
+.subtitle { color: var(--brown-light); font-size: 12px; text-align: center; margin-bottom: 36px; }
+.page { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+.col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.col-label { color: var(--terra-dark); font-family: 'Press Start 2P', monospace; font-size: 6px; letter-spacing: 1px; text-align: center; line-height: 2; }
+.note { color: var(--brown-mid); font-size: 11px; text-align: center; max-width: 300px; line-height: 1.6; }
+
+/* ── PHONE SHELL ── */
+.phone { width: 300px; border-radius: 38px; overflow: hidden; border: 7px solid #c8bdb5; box-shadow: 0 20px 48px rgba(0,0,0,.14), 0 0 0 1px #ddd4cc; }
+.screen { display: flex; flex-direction: column; min-height: 620px; background: var(--bg); }
+
+/* ── HEADER ── */
+.hdr { background: linear-gradient(150deg, var(--terra) 0%, var(--terra-dark) 100%); padding: 16px 16px 14px; position: relative; overflow: hidden; }
+.hdr::after { content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(-45deg,transparent 0,transparent 8px,rgba(255,255,255,.05) 8px,rgba(255,255,255,.05) 12px); pointer-events:none; }
+.hdr-row { display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1; }
+.hdr-left {}
+.hdr-greet { font-family:'Press Start 2P',monospace; font-size:6px; color:rgba(255,255,255,.7); letter-spacing:1px; line-height:2; }
+.hdr-name { font-family:'Press Start 2P',monospace; font-size:9px; color:#fff; margin-top:2px; }
+.hdr-phase { font-size:11px; color:rgba(255,255,255,.65); margin-top:4px; position:relative; z-index:1; }
+.hdr-right { display:flex; flex-direction:column; align-items:flex-end; gap:5px; }
+.hdr-weather { background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:4px 9px; font-size:11px; color:#fff; font-weight:700; white-space:nowrap; }
+.hdr-location { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); border-radius:20px; padding:3px 9px; font-family:'Press Start 2P',monospace; font-size:5px; color:rgba(255,255,255,.85); cursor:pointer; white-space:nowrap; }
+.hdr-location:hover { background:rgba(255,255,255,.25); }
+
+/* ── BODY ── */
+.body { flex:1; padding:12px; display:flex; flex-direction:column; gap:9px; overflow-y:auto; }
+
+/* ── HERO CARD ── */
+.hero { background:var(--card); border:1px solid var(--border); border-radius:4px; box-shadow:0 3px 12px rgba(0,0,0,.07); padding:16px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-24px; right:-24px; width:100px; height:100px; background:radial-gradient(circle,rgba(224,133,118,.12) 0%,transparent 70%); }
+.hero-type { font-family:'Press Start 2P',monospace; font-size:6px; color:var(--terra-dark); letter-spacing:1px; margin-bottom:10px; }
+.hero-km { font-family:'Press Start 2P',monospace; font-size:34px; color:var(--brown); line-height:1; }
+.hero-km span { font-size:13px; color:var(--brown-light); margin-left:5px; }
+.hero-meta { font-size:12px; color:var(--brown-light); margin-top:6px; }
+.hero-divider { border:none; border-top:1px solid var(--border); margin:10px 0; }
+.hero-window { display:flex; align-items:center; gap:7px; }
+.chip { padding:4px 9px; font-family:'Press Start 2P',monospace; font-size:5px; border-radius:3px; }
+.chip-mint { background:var(--mint-pale); border:1px solid var(--mint); color:var(--mint-dark); }
+.chip-yellow { background:var(--yellow-pale); border:1px solid var(--yellow-border); color:var(--yellow); }
+.chip-terra { background:var(--terra-pale); border:1px solid var(--terra); color:var(--terra-dark); }
+.hero-window-text { font-size:11px; color:var(--brown-light); }
+
+/* variants */
+.hero.long { background:var(--yellow-pale); border-color:var(--yellow-border); }
+.hero.long .hero-type { color:var(--yellow); }
+.hero.long .hero-km { color:#6a4c00; }
+.hero.rest { background:var(--mint-pale); border-color:#b0ddd8; }
+.hero.rest .hero-type { color:var(--mint-dark); }
+.hero.rest-msg { font-size:14px; font-weight:800; color:var(--mint-dark); padding:8px 0 4px; line-height:1.4; }
+
+/* ── SIGNAL CARD ── */
+.signal { background:var(--yellow-pale); border:1px solid var(--yellow-border); border-radius:4px; padding:9px 11px; }
+.signal-label { font-family:'Press Start 2P',monospace; font-size:5px; color:var(--yellow); letter-spacing:1px; margin-bottom:5px; }
+.signal-text { font-size:12px; color:var(--brown-mid); line-height:1.6; }
+.signal-text strong { color:#8a6800; font-weight:800; }
+
+/* ── GROCERY CARD ── */
+.grocery-card { background:var(--green-pale); border:1px solid var(--green-border); border-radius:4px; padding:9px 11px; display:flex; align-items:center; gap:10px; }
+.grocery-card.travel { background:#f0f0f0; border-color:#ddd; }
+.grocery-icon { font-size:22px; flex-shrink:0; }
+.grocery-text-label { font-family:'Press Start 2P',monospace; font-size:5px; color:var(--green); letter-spacing:1px; margin-bottom:4px; }
+.grocery-text-label.travel { color:#aaa; }
+.grocery-text-body { font-size:12px; color:var(--brown-mid); line-height:1.5; }
+.grocery-text-body.travel { color:#aaa; }
+
+/* ── STAT ROW ── */
+.stat-row { display:flex; gap:7px; }
+.tile { flex:1; background:var(--card); border:1px solid var(--border); border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,.05); padding:9px 8px 7px; }
+.tile-label { font-family:'Press Start 2P',monospace; font-size:4px; color:var(--brown-light); letter-spacing:1px; margin-bottom:4px; }
+.tile-value { font-family:'Press Start 2P',monospace; font-size:12px; color:var(--brown); line-height:1; }
+.tile-value span { font-size:6px; color:var(--brown-light); }
+.tile-sub { font-size:10px; color:var(--brown-light); margin-top:3px; }
+
+/* ── BUTTONS ── */
+.btn-primary { background:var(--terra); border:none; border-radius:4px; box-shadow:0 4px 14px rgba(224,133,118,.38); padding:15px; font-family:'Press Start 2P',monospace; font-size:9px; color:#fff; letter-spacing:1px; cursor:pointer; text-align:center; width:100%; }
+.btn-secondary { background:var(--parchment); border:1px solid var(--border); border-radius:4px; padding:11px; font-family:'Press Start 2P',monospace; font-size:7px; color:var(--brown-mid); letter-spacing:1px; cursor:pointer; text-align:center; width:100%; margin-top:2px; }
+
+/* ── BADGES SCREEN ── */
+.badges-header { font-family:'Press Start 2P',monospace; font-size:6px; color:var(--brown-light); letter-spacing:1px; padding:4px 0 8px; }
+.badge-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.badge-card { background:var(--card); border:1px solid var(--border); border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,.05); padding:12px 10px; display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
+.badge-card.locked { opacity:.45; filter:grayscale(.5); }
+.badge-card.unlocked { border-color:var(--yellow-border); background:var(--yellow-pale); }
+.badge-emoji { font-size:28px; line-height:1; }
+.badge-name { font-family:'Press Start 2P',monospace; font-size:5px; color:var(--brown); line-height:1.6; }
+.badge-card.unlocked .badge-name { color:var(--yellow); }
+.badge-desc { font-size:10px; color:var(--brown-light); line-height:1.4; }
+.badge-status { font-family:'Press Start 2P',monospace; font-size:5px; padding:3px 7px; border-radius:2px; }
+.badge-status.done { background:var(--yellow-pale); color:var(--yellow); border:1px solid var(--yellow-border); }
+.badge-status.locked { background:var(--parchment); color:var(--brown-light); border:1px solid var(--border); }
+
+/* ── NAV ── */
+.nav { background:#fff; border-top:1px solid var(--border); padding:7px 0 13px; display:flex; justify-content:space-around; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; padding:0 2px; }
+.nav-icon { font-size:18px; }
+.nav-lbl { font-family:'Press Start 2P',monospace; font-size:4px; color:var(--brown-light); }
+.nav-item.active .nav-lbl { color:var(--terra-dark); }
+.nav-dot { width:4px; height:4px; background:var(--terra); border-radius:50%; margin-top:1px; }
+</style>
+</head>
+<body>
+
+<h1>DEBBIE RUNS KOBE · MOCKUP V3</h1>
+<p class="subtitle">Hero + pixel palette · all screens finalised</p>
+
+<div class="page">
+
+  <!-- ── SCREEN 1: EASY RUN DAY (TORONTO) ── -->
+  <div class="col">
+    <div class="col-label">TODAY TAB<br>EASY RUN · TORONTO</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="hdr">
+          <div class="hdr-row">
+            <div class="hdr-left">
+              <div class="hdr-greet">GOOD EVENING</div>
+              <div class="hdr-name">DEBBIE 🌸</div>
+              <div class="hdr-phase">Tue · Pre-Training Wk 1</div>
+            </div>
+            <div class="hdr-right">
+              <div class="hdr-weather">☀️ 24°C · UV 3.1</div>
+              <div class="hdr-location">📍 TORONTO ▾</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <div class="hero-type">🏃 EASY RUN TODAY</div>
+            <div class="hero-km">3.0<span>km</span></div>
+            <div class="hero-meta">~20 min · comfortable pace</div>
+            <hr class="hero-divider">
+            <div class="hero-window">
+              <div class="chip chip-mint">7:30 PM</div>
+              <div class="hero-window-text">UV 0.0 · best window tonight</div>
+            </div>
+          </div>
+          <div class="signal">
+            <div class="signal-label">💡 FITNESS SIGNAL</div>
+            <div class="signal-text"><strong>Last run: 6.6km vs 3km plan.</strong> Feeling strong? Easy runs could stretch to 5–6km today.</div>
+          </div>
+          <div class="grocery-card">
+            <div class="grocery-icon">🛒</div>
+            <div>
+              <div class="grocery-text-label">GROCERIES</div>
+              <div class="grocery-text-body"><strong>Saturday is shop day.</strong> Stock up for the week — chicken, rice, bok choy, ginger.</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="tile">
+              <div class="tile-label">WEEK</div>
+              <div class="tile-value">2<span>/4</span></div>
+              <div class="tile-sub">runs done</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">KM THIS WK</div>
+              <div class="tile-value">6.6</div>
+              <div class="tile-sub">logged</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">TO KOBE</div>
+              <div class="tile-value">158</div>
+              <div class="tile-sub">days</div>
+            </div>
+          </div>
+          <button class="btn-primary">✦ LOG THIS RUN</button>
+        </div>
+        <div class="nav">
+          <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-lbl">TODAY</div><div class="nav-dot"></div></div>
+          <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">PLAN</div></div>
+          <div class="nav-item"><div class="nav-icon">🏅</div><div class="nav-lbl">MILES</div></div>
+          <div class="nav-item"><div class="nav-icon">💡</div><div class="nav-lbl">TIPS</div></div>
+          <div class="nav-item"><div class="nav-icon">🍱</div><div class="nav-lbl">MEALS</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Toronto — grocery reminder shows. Location pill tappable to switch city.</div>
+  </div>
+
+  <!-- ── SCREEN 2: EASY RUN DAY (BERLIN, TRAVEL MODE) ── -->
+  <div class="col">
+    <div class="col-label">TODAY TAB<br>EASY RUN · BERLIN (TRAVEL)</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="hdr">
+          <div class="hdr-row">
+            <div class="hdr-left">
+              <div class="hdr-greet">GOOD EVENING</div>
+              <div class="hdr-name">DEBBIE 🌸</div>
+              <div class="hdr-phase">Tue · Pre-Training Wk 1</div>
+            </div>
+            <div class="hdr-right">
+              <div class="hdr-weather">🌤 19°C · UV 1.2</div>
+              <div class="hdr-location">📍 BERLIN ▾</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="hero">
+            <div class="hero-type">🏃 EASY RUN TODAY</div>
+            <div class="hero-km">3.0<span>km</span></div>
+            <div class="hero-meta">~20 min · comfortable pace</div>
+            <hr class="hero-divider">
+            <div class="hero-window">
+              <div class="chip chip-mint">8:00 PM</div>
+              <div class="hero-window-text">UV 0.0 · best window tonight</div>
+            </div>
+          </div>
+          <div class="signal">
+            <div class="signal-label">💡 FITNESS SIGNAL</div>
+            <div class="signal-text"><strong>Last run: 6.6km vs 3km plan.</strong> Feeling strong? Easy runs could stretch to 5–6km today.</div>
+          </div>
+          <div class="grocery-card travel">
+            <div class="grocery-icon">✈️</div>
+            <div>
+              <div class="grocery-text-label travel">TRAVEL MODE</div>
+              <div class="grocery-text-body travel">Grocery reminders paused. See Meals → Travelling for easy local options.</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="tile">
+              <div class="tile-label">WEEK</div>
+              <div class="tile-value">2<span>/4</span></div>
+              <div class="tile-sub">runs done</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">KM THIS WK</div>
+              <div class="tile-value">6.6</div>
+              <div class="tile-sub">logged</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">TO KOBE</div>
+              <div class="tile-value">158</div>
+              <div class="tile-sub">days</div>
+            </div>
+          </div>
+          <button class="btn-primary">✦ LOG THIS RUN</button>
+        </div>
+        <div class="nav">
+          <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-lbl">TODAY</div><div class="nav-dot"></div></div>
+          <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">PLAN</div></div>
+          <div class="nav-item"><div class="nav-icon">🏅</div><div class="nav-lbl">MILES</div></div>
+          <div class="nav-item"><div class="nav-icon">💡</div><div class="nav-lbl">TIPS</div></div>
+          <div class="nav-item"><div class="nav-icon">🍱</div><div class="nav-lbl">MEALS</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Berlin — travel mode auto-detected, grocery card suppressed, meals tab points to travel recipes.</div>
+  </div>
+
+  <!-- ── SCREEN 3: REST DAY ── -->
+  <div class="col">
+    <div class="col-label">TODAY TAB<br>REST DAY</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="hdr">
+          <div class="hdr-row">
+            <div class="hdr-left">
+              <div class="hdr-greet">GOOD MORNING</div>
+              <div class="hdr-name">DEBBIE 🌸</div>
+              <div class="hdr-phase">Mon · Pre-Training Wk 1</div>
+            </div>
+            <div class="hdr-right">
+              <div class="hdr-weather">☁️ 18°C · UV 0.0</div>
+              <div class="hdr-location">📍 TORONTO ▾</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="hero rest">
+            <div class="hero-type rest-type">😴 REST DAY</div>
+            <div class="rest-msg">No run scheduled.<br>Recovery is training.</div>
+            <hr class="hero-divider">
+            <div class="hero-window">
+              <div class="chip chip-mint">NEXT RUN</div>
+              <div class="hero-window-text">Tomorrow · Easy · 3km</div>
+            </div>
+          </div>
+          <div class="grocery-card">
+            <div class="grocery-icon">🍳</div>
+            <div>
+              <div class="grocery-text-label">BATCH COOK TODAY</div>
+              <div class="grocery-text-body"><strong>Sunday = prep day.</strong> 15 min hands-on — rice cooker + oven in parallel. Sets you up all week.</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="tile">
+              <div class="tile-label">WEEK</div>
+              <div class="tile-value">1<span>/4</span></div>
+              <div class="tile-sub">runs done</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">KM THIS WK</div>
+              <div class="tile-value">6.6</div>
+              <div class="tile-sub">logged</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">TO KOBE</div>
+              <div class="tile-value">157</div>
+              <div class="tile-sub">days</div>
+            </div>
+          </div>
+          <button class="btn-secondary">+ LOG A BONUS RUN</button>
+        </div>
+        <div class="nav">
+          <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-lbl">TODAY</div><div class="nav-dot"></div></div>
+          <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">PLAN</div></div>
+          <div class="nav-item"><div class="nav-icon">🏅</div><div class="nav-lbl">MILES</div></div>
+          <div class="nav-item"><div class="nav-icon">💡</div><div class="nav-lbl">TIPS</div></div>
+          <div class="nav-item"><div class="nav-icon">🍱</div><div class="nav-lbl">MEALS</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Rest day — no primary log button, bonus run option available, batch cook reminder surfaces.</div>
+  </div>
+
+  <!-- ── SCREEN 4: MILES (BADGES) TAB ── -->
+  <div class="col">
+    <div class="col-label">MILES TAB<br>BADGES</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="hdr">
+          <div class="hdr-row">
+            <div class="hdr-left">
+              <div class="hdr-greet">YOUR MILES</div>
+              <div class="hdr-name">BADGES 🏅</div>
+              <div class="hdr-phase">Pre-Training Wk 1 · 6.6km logged</div>
+            </div>
+            <div class="hdr-right">
+              <div class="hdr-location">📍 TORONTO ▾</div>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="badges-header">UNLOCKED</div>
+          <div class="badge-grid">
+            <div class="badge-card unlocked">
+              <div class="badge-emoji">👟</div>
+              <div class="badge-name">FIRST RUN</div>
+              <div class="badge-desc">Completed your first training run</div>
+              <div class="badge-status done">✓ DONE</div>
+            </div>
+            <div class="badge-card unlocked">
+              <div class="badge-emoji">🔥</div>
+              <div class="badge-name">DOUBLE UP</div>
+              <div class="badge-desc">Ran 2× the plan distance</div>
+              <div class="badge-status done">✓ DONE</div>
+            </div>
+          </div>
+          <div class="badges-header" style="margin-top:8px">COMING UP</div>
+          <div class="badge-grid">
+            <div class="badge-card locked">
+              <div class="badge-emoji">🌙</div>
+              <div class="badge-name">NIGHT OWL</div>
+              <div class="badge-desc">3 runs after 7:30pm</div>
+              <div class="badge-status locked">1 / 3</div>
+            </div>
+            <div class="badge-card locked">
+              <div class="badge-emoji">📅</div>
+              <div class="badge-name">FULL WEEK</div>
+              <div class="badge-desc">Complete all runs in a week</div>
+              <div class="badge-status locked">2 / 4</div>
+            </div>
+            <div class="badge-card locked">
+              <div class="badge-emoji">🌍</div>
+              <div class="badge-name">GLOBE RUNNER</div>
+              <div class="badge-desc">Log a run in 3 different cities</div>
+              <div class="badge-status locked">1 / 3</div>
+            </div>
+            <div class="badge-card locked">
+              <div class="badge-emoji">🌸</div>
+              <div class="badge-name">KOBE BOUND</div>
+              <div class="badge-desc">Complete all 18 plan weeks</div>
+              <div class="badge-status locked">0 / 18</div>
+            </div>
+          </div>
+        </div>
+        <div class="nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-lbl">TODAY</div></div>
+          <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">PLAN</div></div>
+          <div class="nav-item active"><div class="nav-icon">🏅</div><div class="nav-lbl">MILES</div><div class="nav-dot"></div></div>
+          <div class="nav-item"><div class="nav-icon">💡</div><div class="nav-lbl">TIPS</div></div>
+          <div class="nav-item"><div class="nav-icon">🍱</div><div class="nav-lbl">MEALS</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Miles tab = badge grid. Unlocked glow in yellow. Locked show progress toward next unlock.</div>
+  </div>
+
+</div>
+
+</body>
+</html>
