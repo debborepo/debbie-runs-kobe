@@ -824,7 +824,7 @@ function renderPlan() {
           ${notesStr}
           <div style="display:flex;gap:6px;margin-top:6px">
             <button onclick="event.stopPropagation();editRun(${i},'${mode}',${week})" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 8px;border:1px solid var(--mint);border-radius:3px;background:var(--mint-pale);color:var(--mint-dark);cursor:pointer">✏ EDIT</button>
-            <button onclick="event.stopPropagation();confirmDeleteRun(${i},'${mode}',${week})" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer">✕ DELETE</button>
+            <button onclick="event.stopPropagation();confirmDeleteRun(${i},'${mode}',${week},this)" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer">✕ DELETE</button>
           </div>
         </div>
         <span class="check-badge ${lbl.cls}">${lbl.text}</span>`;
@@ -900,12 +900,26 @@ function editRun(dayIdx, mode, week) {
   });
 }
 
-function confirmDeleteRun(dayIdx, mode, week) {
-  if (!confirm('Delete this logged run?')) return;
-  const checks = loadChecks(mode, week);
-  checks[dayIdx] = false;
-  saveChecks(mode, week, checks);
-  deleteRun(mode, week, dayIdx).then(() => { renderPlan(); renderToday(); renderMiles(); });
+function confirmDeleteRun(dayIdx, mode, week, btn) {
+  if (btn.dataset.confirming === 'true') {
+    const checks = loadChecks(mode, week);
+    checks[dayIdx] = false;
+    saveChecks(mode, week, checks);
+    deleteRun(mode, week, dayIdx).then(() => { renderPlan(); renderToday(); renderMiles(); });
+  } else {
+    btn.dataset.confirming = 'true';
+    btn.textContent = 'SURE?';
+    btn.style.background = 'var(--terra)';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      if (btn.dataset.confirming === 'true') {
+        btn.dataset.confirming = 'false';
+        btn.textContent = '✕ DELETE';
+        btn.style.background = 'var(--terra-pale)';
+        btn.style.color = 'var(--terra-dark)';
+      }
+    }, 3000);
+  }
 }
 
 function toggleCheck(dayIdx, mode, week) {
@@ -913,7 +927,6 @@ function toggleCheck(dayIdx, mode, week) {
   if (checks[dayIdx]) return; // done rows use Edit/Delete buttons instead
   checks[dayIdx] = true;
   saveChecks(mode, week, checks);
-  renderPlan();
   const sch = mode==='pre' ? PRETRAIN : SCHEDULE;
   const day = sch[week-1]?.[dayIdx];
   if (day && day.type === 'cross') {
@@ -921,7 +934,7 @@ function toggleCheck(dayIdx, mode, week) {
   } else if (day && day.type !== 'rest') {
     openModal(dayIdx, mode, week, day);
   } else {
-    saveRun(mode, week, dayIdx, null, null, null, null).then(() => { renderToday(); renderMiles(); });
+    saveRun(mode, week, dayIdx, null, null, null, null).then(() => { renderToday(); renderPlan(); renderMiles(); });
   }
 }
 
@@ -1226,9 +1239,25 @@ function toggleGrocery(key, el) {
 }
 function clearGroceries() { localStorage.removeItem('grocery_checked'); renderGroceries(); }
 
-function confirmDeleteBonus(id) {
-  if (!confirm('Delete this bonus run?')) return;
-  deleteRunById(id).then(() => { renderToday(); renderExtraRuns(); renderMiles(); });
+function confirmDeleteBonus(id, btn) {
+  if (btn.dataset.confirming === 'true') {
+    deleteRunById(id).then(() => { renderToday(); renderExtraRuns(); renderMiles(); });
+  } else {
+    btn.dataset.confirming = 'true';
+    btn.textContent = 'SURE?';
+    btn.style.background = 'var(--terra)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--terra-dark)';
+    setTimeout(() => {
+      if (btn.dataset.confirming === 'true') {
+        btn.dataset.confirming = 'false';
+        btn.textContent = '✕';
+        btn.style.background = 'var(--terra-pale)';
+        btn.style.color = 'var(--terra-dark)';
+        btn.style.borderColor = 'var(--terra)';
+      }
+    }, 3000);
+  }
 }
 
 // ── EXTRA RUNS ────────────────────────────────────────────────────────────────
@@ -1245,7 +1274,7 @@ function renderExtraRuns() {
         <div class="bonus-run-km">${r.km_actual||'—'}<span style="font-size:8px;color:var(--brown-light)"> km</span></div>
         <div class="bonus-run-note">${r.notes||r.mood||'Bonus run 💪'}</div>
       </div>
-      <button onclick="confirmDeleteBonus(${r.id})" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;align-self:center;flex-shrink:0">✕</button>
+      <button onclick="confirmDeleteBonus(${r.id},this)" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;align-self:center;flex-shrink:0">✕</button>
     </div>`;
   }).join('');
 }
@@ -1406,7 +1435,15 @@ function toggleSoreLoc(btn) {
 }
 
 async function submitRun() {
-  const km = parseFloat(document.getElementById('modal-km').value) || null;
+  const kmInput = document.getElementById('modal-km');
+  const km = parseFloat(kmInput.value) || null;
+  if (!_extraModal && !km) {
+    kmInput.style.borderColor = 'var(--terra)';
+    kmInput.placeholder = 'Enter your actual km!';
+    kmInput.focus();
+    setTimeout(() => { kmInput.style.borderColor = ''; }, 2000);
+    return;
+  }
   const notes = document.getElementById('modal-notes').value.trim() || null;
   const loc = LOCATIONS[currentLocIdx];
   if (loc) _selectedConds.location = loc.name;
