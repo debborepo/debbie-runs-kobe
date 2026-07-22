@@ -18,6 +18,8 @@ async function fetchRuns() {
 }
 async function saveRun(mode, week, dayIdx, kmActual, mood, notes, conditions) {
   try {
+    // Delete any existing entry for this slot first so we never get duplicates
+    await fetch(`${SB_URL}/rest/v1/runs?mode=eq.${mode}&week=eq.${week}&day_idx=eq.${dayIdx}`, { method:'DELETE', headers: SB_HEADERS });
     await fetch(`${SB_URL}/rest/v1/runs`, {
       method: 'POST',
       headers: { ...SB_HEADERS, 'Prefer':'return=minimal' },
