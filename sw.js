@@ -1,7 +1,5 @@
-const CACHE = 'debbie-runs-v3';
-const ASSETS = [
-  './index.html',
-  './app.js',
+const CACHE = 'debbie-runs-v4';
+const CACHE_ASSETS = [
   './avatar_nobg.png',
   './icon-192.png',
   './icon-512.png',
@@ -10,7 +8,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CACHE_ASSETS)).catch(() => {}));
   self.skipWaiting();
 });
 
@@ -22,6 +20,15 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  // Always fetch HTML and JS fresh from network; fall back to cache only if offline
+  if (url.pathname.endsWith('.html') || url.pathname.endsWith('.js')) {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+  // Everything else: cache-first
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => cached))
   );

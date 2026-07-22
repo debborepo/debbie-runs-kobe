@@ -279,7 +279,12 @@ function kmThisWeek() {
   return Math.round(total*10)/10;
 }
 function isRunLogged(mode,week,dayIdx) { return runsCache.some(r => r.mode===mode && r.week===week && r.day_idx===dayIdx); }
-function getRunLog(mode,week,dayIdx) { return runsCache.find(r => r.mode===mode && r.week===week && r.day_idx===dayIdx); }
+function getRunLog(mode,week,dayIdx) {
+  const matches = runsCache.filter(r => r.mode===mode && r.week===week && r.day_idx===dayIdx);
+  if (!matches.length) return undefined;
+  // prefer the entry that has actual km logged; otherwise take the most recent
+  return matches.find(r => r.km_actual) || matches[matches.length-1];
+}
 function runsThisWeekCount() {
   const p = currentPeriod();
   if (p.mode === 'pre') return runsCache.filter(r => r.mode==='pre' && r.week===p.week && r.day_idx>=0).length;
