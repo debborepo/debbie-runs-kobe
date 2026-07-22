@@ -1,4 +1,4 @@
-const CACHE = 'debbie-runs-v2';
+const CACHE = 'debbie-runs-v3';
 const ASSETS = [
   './index.html',
   './app.js',

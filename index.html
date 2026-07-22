@@ -383,6 +383,9 @@ body {
 .week-chip.done { background: var(--terra-pale); color: var(--brown); }
 .week-chip.current { background: var(--yellow-pale); border-color: var(--yellow-border); color: var(--brown); }
 .week-chip.upcoming { background: #f0f0f0; color: var(--brown-light); }
+.week-chip.viewing { background: var(--mint-pale); border-color: var(--mint); color: var(--mint-dark); }
+.week-chip.done, .week-chip.current { cursor: pointer; }
+.check-item { align-items: flex-start; }
 
 /* ── SCROLLBAR ── */
 .panel::-webkit-scrollbar { width: 4px; }
@@ -424,13 +427,10 @@ body {
     <div id="today-grocery-area"></div>
     <div class="stat-row">
       <div class="tile"><div class="tile-label">WEEK</div><div class="tile-value" id="stat-week">—</div><div class="tile-sub">of 18</div></div>
-      <div class="tile"><div class="tile-label">KM THIS WK</div><div class="tile-value" id="stat-km-week">—</div><div class="tile-sub">logged</div></div>
+      <div class="tile"><div class="tile-label">KM TOTAL</div><div class="tile-value" id="stat-km-week">—</div><div class="tile-sub" id="stat-km-week-sub">— km this wk</div></div>
       <div class="tile"><div class="tile-label">TO KOBE</div><div class="tile-value" id="stat-days">—</div><div class="tile-sub">days</div></div>
     </div>
     <div id="today-cta-area"></div>
-
-    <div class="section-title">☀️ WEATHER</div>
-    <div class="card"><div class="card-body" id="weather-widget-body"><div style="font-size:13px;color:var(--brown-mid)">Loading weather...</div></div></div>
 
     <div class="section-title">✦ BONUS RUNS</div>
     <div class="card">
@@ -439,6 +439,9 @@ body {
         <button class="btn-secondary" onclick="openExtraModal()">+ LOG A BONUS RUN</button>
       </div>
     </div>
+
+    <div class="section-title">☀️ WEATHER</div>
+    <div class="card"><div class="card-body" id="weather-widget-body"><div style="font-size:13px;color:var(--brown-mid)">Loading weather...</div></div></div>
   </div>
 
   <!-- PLAN -->
@@ -590,12 +593,12 @@ body {
   <div class="modal-sheet">
     <div class="modal-bar">
       <span class="modal-title">📝 LOG RUN</span>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="cancelModal()">✕</button>
     </div>
     <div class="modal-body">
       <div id="modal-day-label" style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--terra-dark)"></div>
       <div>
-        <div class="modal-label">ACTUAL KM RUN</div>
+        <div class="modal-label" id="modal-km-label">ACTUAL KM RUN</div>
         <input id="modal-km" class="modal-input" type="number" step="0.1" min="0" placeholder="e.g. 5.2">
       </div>
       <div>
