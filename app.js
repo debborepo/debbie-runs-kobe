@@ -881,30 +881,25 @@ function editRun(dayIdx, mode, week) {
   const day = sch[week-1]?.[dayIdx];
   if (!day) return;
   const runLog = getRunLog(mode, week, dayIdx);
-  // Delete existing entry then reopen modal pre-filled
-  deleteRun(mode, week, dayIdx).then(() => {
-    const checks = loadChecks(mode, week);
-    checks[dayIdx] = false;
-    saveChecks(mode, week, checks);
-    _modalCtx = { dayIdx, mode, week, day };
-    _selectedMood = runLog?.mood || '';
-    _selectedConds = runLog?.conditions ? (typeof runLog.conditions === 'string' ? JSON.parse(runLog.conditions) : runLog.conditions) : {};
-    _selectedSoreLocs = _selectedConds.soreness || [];
-    _extraModal = false;
-    document.getElementById('modal-km').value = runLog?.km_actual || '';
-    document.getElementById('modal-km').placeholder = day.km ? `Plan: ${day.km} km — or enter yours` : 'e.g. 5.2';
-    document.getElementById('modal-km-label').textContent = 'ACTUAL KM RUN';
-    document.getElementById('modal-notes').value = runLog?.notes || '';
-    document.querySelectorAll('.mood-btn').forEach(b => {
-      b.classList.toggle('selected', b.dataset.mood === _selectedMood);
-    });
-    document.querySelectorAll('.cond-chip').forEach(b => b.classList.remove('selected','sore-selected'));
-    document.querySelectorAll('.loc-chip').forEach(b => b.classList.remove('selected'));
-    document.getElementById('soreness-row').className = 'soreness-row';
-    document.getElementById('modal-day-label').textContent = `${DAY_NAMES[dayIdx]} · ${dayName(day)}`;
-    document.getElementById('modal-overlay').style.display = 'flex';
-    renderPlan();
+  // Open modal pre-filled — saveRun does delete+insert on submit so no need to delete first
+  _modalCtx = { dayIdx, mode, week, day };
+  _selectedMood = runLog?.mood || '';
+  _selectedConds = runLog?.conditions ? (typeof runLog.conditions === 'string' ? JSON.parse(runLog.conditions) : runLog.conditions) : {};
+  _selectedSoreLocs = _selectedConds.soreness || [];
+  _extraModal = false;
+  document.getElementById('modal-km').value = runLog?.km_actual || '';
+  document.getElementById('modal-km').placeholder = day.km ? `Plan: ${day.km} km — or enter yours` : 'e.g. 5.2';
+  document.getElementById('modal-km-label').textContent = 'ACTUAL KM RUN';
+  document.getElementById('modal-notes').value = runLog?.notes || '';
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.mood === _selectedMood);
   });
+  document.querySelectorAll('.cond-chip').forEach(b => b.classList.remove('selected','sore-selected'));
+  document.querySelectorAll('.loc-chip').forEach(b => b.classList.remove('selected'));
+  document.getElementById('soreness-row').className = 'soreness-row';
+  document.getElementById('modal-day-label').textContent = `✏ EDIT · ${DAY_NAMES[dayIdx]} · ${dayName(day)}`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-km').focus(), 100);
 }
 
 function confirmDeleteRun(dayIdx, mode, week, btn) {
