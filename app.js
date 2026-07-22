@@ -32,6 +32,12 @@ async function deleteRun(mode, week, dayIdx) {
     await fetchRuns();
   } catch(e) {}
 }
+async function deleteRunById(id) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/runs?id=eq.${id}`, { method:'DELETE', headers: SB_HEADERS });
+    await fetchRuns();
+  } catch(e) {}
+}
 async function saveExtraRun(kmActual, mood, notes, conditions) {
   try {
     await fetch(`${SB_URL}/rest/v1/runs`, {
@@ -801,24 +807,51 @@ function renderPlan() {
     if (!isRest) { checkable++; if (isDone) doneCount++; }
     const item = document.createElement('div');
     item.className = 'check-item'+(isDone?' done':'')+(isRest?' rest-day':'');
-    if (!isRest) item.onclick = () => toggleCheck(i, mode, week);
     const lbl = dayLabel(d);
     const runLog = isDone ? getRunLog(mode, week, i) : null;
     const displayKm = runLog?.km_actual || (isDone && d.km ? d.km : null);
-    const kmLine = displayKm ? `<div style="font-family:'Press Start 2P',monospace;font-size:6px;color:var(--green);margin-top:3px">✓ ${displayKm}km ${runLog?.mood||''}</div>` : '';
-    // For past weeks, show a small "LOG" button on unlogged run days
-    const logBtnFn = d.type === 'cross' ? `openCrossModal(${i},'${mode}',${week},${JSON.stringify(d)})` : `openShiftedRunModal(${i},'${mode}',${week})`;
-    const logBtn = isPast && !isDone && !isRest
-      ? `<button onclick="event.stopPropagation();${logBtnFn}" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;margin-left:4px;flex-shrink:0">LOG</button>` : '';
-    item.innerHTML = `
-      <div class="check-box">${isDone?'✓':isRest?'—':''}</div>
-      <div class="check-content">
-        <div class="check-day">${DAY_NAMES[i]}</div>
-        <div class="check-name">${dayName(d)}</div>
-        <div class="check-detail">${dayDetail(d, week)}</div>
-        ${kmLine}
-      </div>
-      <span class="check-badge ${lbl.cls}">${lbl.text}</span>${logBtn}`;
+
+    if (isDone) {
+      // Done state: show what was logged + Edit / Delete buttons, no tap-to-toggle
+      const moodStr = runLog?.mood ? ` · ${runLog.mood}` : '';
+      const notesStr = runLog?.notes ? `<div style="font-size:11px;color:var(--brown-mid);margin-top:2px">${runLog.notes}</div>` : '';
+      item.innerHTML = `
+        <div class="check-box">✓</div>
+        <div class="check-content">
+          <div class="check-day">${DAY_NAMES[i]}</div>
+          <div class="check-name">${dayName(d)}</div>
+          <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--green);margin-top:4px">${displayKm ? displayKm+'km' : '✓ done'}${moodStr}</div>
+          ${notesStr}
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button onclick="event.stopPropagation();editRun(${i},'${mode}',${week})" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 8px;border:1px solid var(--mint);border-radius:3px;background:var(--mint-pale);color:var(--mint-dark);cursor:pointer">✏ EDIT</button>
+            <button onclick="event.stopPropagation();confirmDeleteRun(${i},'${mode}',${week})" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer">✕ DELETE</button>
+          </div>
+        </div>
+        <span class="check-badge ${lbl.cls}">${lbl.text}</span>`;
+    } else if (isRest) {
+      item.innerHTML = `
+        <div class="check-box">—</div>
+        <div class="check-content">
+          <div class="check-day">${DAY_NAMES[i]}</div>
+          <div class="check-name">${dayName(d)}</div>
+          <div class="check-detail">${dayDetail(d, week)}</div>
+        </div>
+        <span class="check-badge ${lbl.cls}">${lbl.text}</span>`;
+    } else {
+      // Not done — tap to log
+      const logBtnFn = d.type === 'cross' ? `openCrossModal(${i},'${mode}',${week},${JSON.stringify(d)})` : `openShiftedRunModal(${i},'${mode}',${week})`;
+      const logBtn = isPast
+        ? `<button onclick="event.stopPropagation();${logBtnFn}" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;flex-shrink:0">LOG</button>` : '';
+      item.onclick = () => toggleCheck(i, mode, week);
+      item.innerHTML = `
+        <div class="check-box"></div>
+        <div class="check-content">
+          <div class="check-day">${DAY_NAMES[i]}</div>
+          <div class="check-name">${dayName(d)}</div>
+          <div class="check-detail">${dayDetail(d, week)}</div>
+        </div>
+        <span class="check-badge ${lbl.cls}">${lbl.text}</span>${logBtn}`;
+    }
     list.appendChild(item);
   });
 
@@ -836,16 +869,48 @@ function renderPlan() {
   renderCalendar();
 }
 
-function toggleCheck(dayIdx, mode, week) {
-  const checks = loadChecks(mode, week);
-  if (checks[dayIdx]) {
-    // Already done — require confirmation before deleting
-    if (!confirm('Remove this logged run?')) return;
+function editRun(dayIdx, mode, week) {
+  const sch = mode === 'pre' ? PRETRAIN : SCHEDULE;
+  const day = sch[week-1]?.[dayIdx];
+  if (!day) return;
+  const runLog = getRunLog(mode, week, dayIdx);
+  // Delete existing entry then reopen modal pre-filled
+  deleteRun(mode, week, dayIdx).then(() => {
+    const checks = loadChecks(mode, week);
     checks[dayIdx] = false;
     saveChecks(mode, week, checks);
-    deleteRun(mode, week, dayIdx).then(() => { renderPlan(); renderToday(); renderMiles(); });
-    return;
-  }
+    _modalCtx = { dayIdx, mode, week, day };
+    _selectedMood = runLog?.mood || '';
+    _selectedConds = runLog?.conditions ? (typeof runLog.conditions === 'string' ? JSON.parse(runLog.conditions) : runLog.conditions) : {};
+    _selectedSoreLocs = _selectedConds.soreness || [];
+    _extraModal = false;
+    document.getElementById('modal-km').value = runLog?.km_actual || '';
+    document.getElementById('modal-km').placeholder = day.km ? `Plan: ${day.km} km — or enter yours` : 'e.g. 5.2';
+    document.getElementById('modal-km-label').textContent = 'ACTUAL KM RUN';
+    document.getElementById('modal-notes').value = runLog?.notes || '';
+    document.querySelectorAll('.mood-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.mood === _selectedMood);
+    });
+    document.querySelectorAll('.cond-chip').forEach(b => b.classList.remove('selected','sore-selected'));
+    document.querySelectorAll('.loc-chip').forEach(b => b.classList.remove('selected'));
+    document.getElementById('soreness-row').className = 'soreness-row';
+    document.getElementById('modal-day-label').textContent = `${DAY_NAMES[dayIdx]} · ${dayName(day)}`;
+    document.getElementById('modal-overlay').style.display = 'flex';
+    renderPlan();
+  });
+}
+
+function confirmDeleteRun(dayIdx, mode, week) {
+  if (!confirm('Delete this logged run?')) return;
+  const checks = loadChecks(mode, week);
+  checks[dayIdx] = false;
+  saveChecks(mode, week, checks);
+  deleteRun(mode, week, dayIdx).then(() => { renderPlan(); renderToday(); renderMiles(); });
+}
+
+function toggleCheck(dayIdx, mode, week) {
+  const checks = loadChecks(mode, week);
+  if (checks[dayIdx]) return; // done rows use Edit/Delete buttons instead
   checks[dayIdx] = true;
   saveChecks(mode, week, checks);
   renderPlan();
@@ -1161,6 +1226,11 @@ function toggleGrocery(key, el) {
 }
 function clearGroceries() { localStorage.removeItem('grocery_checked'); renderGroceries(); }
 
+function confirmDeleteBonus(id) {
+  if (!confirm('Delete this bonus run?')) return;
+  deleteRunById(id).then(() => { renderToday(); renderExtraRuns(); renderMiles(); });
+}
+
 // ── EXTRA RUNS ────────────────────────────────────────────────────────────────
 function renderExtraRuns() {
   const container = document.getElementById('extra-runs-list');
@@ -1169,12 +1239,13 @@ function renderExtraRuns() {
   if (!extras.length) { container.innerHTML = '<div style="font-size:13px;color:var(--brown-light)">No bonus runs logged yet.</div>'; return; }
   container.innerHTML = extras.slice().reverse().map(r => {
     const dt = r.logged_at ? new Date(r.logged_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
-    return `<div class="bonus-run-item">
+    return `<div class="bonus-run-item" style="justify-content:space-between">
       <div>
         <div class="bonus-run-date">${dt}</div>
         <div class="bonus-run-km">${r.km_actual||'—'}<span style="font-size:8px;color:var(--brown-light)"> km</span></div>
         <div class="bonus-run-note">${r.notes||r.mood||'Bonus run 💪'}</div>
       </div>
+      <button onclick="confirmDeleteBonus(${r.id})" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;align-self:center;flex-shrink:0">✕</button>
     </div>`;
   }).join('');
 }
