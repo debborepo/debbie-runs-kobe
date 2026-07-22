@@ -21,7 +21,7 @@ async function saveRun(mode, week, dayIdx, kmActual, mood, notes, conditions) {
     await fetch(`${SB_URL}/rest/v1/runs`, {
       method: 'POST',
       headers: { ...SB_HEADERS, 'Prefer':'return=minimal' },
-      body: JSON.stringify({ mode, week, day_idx: dayIdx, km_actual: kmActual||null, mood: mood||null, notes: notes||null, conditions: conditions||null })
+      body: JSON.stringify({ mode, week, day_idx: dayIdx, km_actual: kmActual||null, mood: mood||null, notes: notes||null, conditions: conditions||null, logged_at: new Date().toISOString() })
     });
     await fetchRuns();
   } catch(e) { console.warn('save failed', e); }
@@ -37,7 +37,7 @@ async function saveExtraRun(kmActual, mood, notes, conditions) {
     await fetch(`${SB_URL}/rest/v1/runs`, {
       method: 'POST',
       headers: { ...SB_HEADERS, 'Prefer':'return=minimal' },
-      body: JSON.stringify({ mode:'extra', week:0, day_idx:-1, km_actual: kmActual||null, mood: mood||null, notes: notes||null, conditions: conditions||null })
+      body: JSON.stringify({ mode:'extra', week:0, day_idx:-1, km_actual: kmActual||null, mood: mood||null, notes: notes||null, conditions: conditions||null, logged_at: new Date().toISOString() })
     });
     await fetchRuns();
   } catch(e) {}
@@ -266,7 +266,7 @@ function kmThisWeek() {
     total += sch[r.week-1]?.[r.day_idx]?.km || 0;
   });
   const weekAgo = new Date(Date.now()-7*86400000);
-  runsCache.filter(r => r.mode==='extra' && r.km_actual && r.logged_at && new Date(r.logged_at)>=weekAgo)
+  runsCache.filter(r => r.mode==='extra' && r.km_actual && (!r.logged_at || new Date(r.logged_at)>=weekAgo))
            .forEach(r => { total += parseFloat(r.km_actual); });
   return Math.round(total*10)/10;
 }
@@ -474,7 +474,11 @@ const BADGES = [
   {emoji:'📅', name:'FULL WEEK',   desc:'Completed all runs in a training week',     unlock:()=> { for (let w=1;w<=Math.max(CURR,PRE_WEEK);w++) { const sch=PRE_TRAINING?PRETRAIN:SCHEDULE; const days=sch[w-1]||[]; const runDays=days.filter(d=>d.type!=='rest'&&d.type!=='cross').length; const logged=runsCache.filter(r=>r.mode===(PRE_TRAINING?'pre':'plan')&&r.week===w&&r.day_idx>=0).length; if(runDays>0&&logged>=runDays) return true; } return false; }},
   {emoji:'⚡', name:'100KM CLUB',  desc:'Logged 100km in training',                 unlock:()=> totalKmLogged() >= 100},
   {emoji:'🌙', name:'NIGHT OWL',   desc:'3 evening runs logged (after 7:30pm)',      unlock:()=> runsCache.filter(r => r.notes && r.notes.includes('evening')).length >= 3},
-  {emoji:'🌍', name:'GLOBE RUNNER',desc:'Logged a run outside Toronto or Taiwan',    unlock:()=> runsCache.some(r => r.notes && r.notes.includes('abroad'))},
+  {emoji:'🌍', name:'GLOBE RUNNER',desc:'Logged a run outside Toronto or Taiwan',    unlock:()=> runsCache.some(r => {
+    if (r.notes && r.notes.includes('abroad')) return true;
+    if (!r.conditions) return false;
+    try { const c = typeof r.conditions==='string'?JSON.parse(r.conditions):r.conditions; return !!(c.location && !LOCATIONS.find(l=>l.name===c.location&&l.home)); } catch { return false; }
+  })},
   {emoji:'🌓', name:'21KM DONE',   desc:'Completed the half marathon long run',      unlock:()=> CURR >= 8 || runsCache.some(r=>r.km_actual && parseFloat(r.km_actual)>=21)},
   {emoji:'🗻', name:'THE 20-MILER',desc:'Completed the 32km peak run in Week 15',   unlock:()=> CURR >= 15},
   {emoji:'🌸', name:'TAPER MODE',  desc:'Entered Week 16. You\'ve done the work.',  unlock:()=> CURR >= 16},
@@ -607,7 +611,11 @@ function renderToday() {
 
   // stat tiles
   document.getElementById('stat-week').textContent = p.mode === 'pre' ? `PT${p.week}` : (p.mode === 'plan' ? p.week : '18');
-  document.getElementById('stat-km-week').textContent = kmThisWeek();
+  const totalKm = totalKmLogged();
+  const weekKm = kmThisWeek();
+  document.getElementById('stat-km-week').textContent = totalKm;
+  const subEl = document.getElementById('stat-km-week-sub');
+  if (subEl) subEl.textContent = `${weekKm} km this wk`;
   document.getElementById('stat-days').textContent = Math.max(0, daysToRace());
 
   // CTA
@@ -620,7 +628,13 @@ function renderToday() {
       ? `<div style="text-align:center;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--green);padding:8px">✓ RUN LOGGED TODAY</div>`
       : `<button class="btn-primary" onclick="openTodayRunModal()">✦ LOG TODAY'S RUN</button>`;
   } else {
-    ctaArea.innerHTML = `<button class="btn-secondary" onclick="openExtraModal()">+ LOG A BONUS RUN</button>`;
+    const unlogged = getUnloggedRunsThisWeek();
+    const shiftSection = unlogged.length ? `
+      <div style="margin-top:10px;background:var(--yellow-pale);border:1px solid var(--yellow-border);border-radius:6px;padding:10px 12px">
+        <div style="font-family:'Press Start 2P',monospace;font-size:5px;color:var(--yellow);margin-bottom:8px">↕ RUNNING ON A DIFFERENT DAY?</div>
+        ${unlogged.map(r => `<button class="btn-secondary" style="margin-top:6px" onclick="openShiftedRunModal(${r.dayIdx},'${r.mode}',${r.week})">LOG ${r.label||DAY_NAMES[r.dayIdx]} · ${dayName(r.day)}</button>`).join('')}
+      </div>` : '';
+    ctaArea.innerHTML = `<button class="btn-secondary" onclick="openExtraModal()">+ LOG A BONUS RUN</button>${shiftSection}`;
   }
 
   // soreness warning on tips panel
@@ -702,9 +716,25 @@ function dayName(d) {
 }
 
 // ── PLAN PANEL ────────────────────────────────────────────────────────────────
+let _viewingWeek = null; // null = current week
+
+function viewWeek(mode, week) {
+  _viewingWeek = { mode, week };
+  renderPlan();
+}
+function viewCurrentWeek() {
+  _viewingWeek = null;
+  renderPlan();
+}
+
 function renderPlan() {
   const p = currentPeriod();
-  // Progress bar
+
+  // Resolve which week we're showing in the checklist
+  const viewing = _viewingWeek || { mode: p.mode === 'pre' ? 'pre' : 'plan', week: p.mode === 'pre' ? p.week : p.week };
+  const isPast = _viewingWeek !== null && !(viewing.mode === (p.mode==='pre'?'pre':'plan') && viewing.week === (p.mode==='pre'?p.week:p.week));
+
+  // Progress bar always reflects current real progress
   const pct = p.mode === 'done' ? 100 : p.mode === 'plan' ? Math.round((p.week/TOTAL_WEEKS)*100) : Math.round((p.week/PT_TOTAL)*100);
   document.getElementById('prog-pct').textContent = pct+'%';
   document.getElementById('capsule-fill').style.width = pct+'%';
@@ -714,25 +744,58 @@ function renderPlan() {
   const chips = document.getElementById('week-chips');
   chips.innerHTML = '';
   if (p.mode === 'pre') {
-    for (let i=1;i<=PT_TOTAL;i++) { const c=document.createElement('span'); c.className='week-chip '+(i<p.week?'done':i===p.week?'current':'upcoming'); c.textContent='PT'+i; chips.appendChild(c); }
+    for (let i=1;i<=PT_TOTAL;i++) {
+      const c=document.createElement('span');
+      const isCurrent = i===p.week && !_viewingWeek;
+      const isViewing = _viewingWeek && _viewingWeek.mode==='pre' && _viewingWeek.week===i;
+      c.className='week-chip '+(isViewing?'viewing':i<p.week?'done':isCurrent?'current':'upcoming');
+      c.textContent='PT'+i;
+      if (i<=p.week) { c.style.cursor='pointer'; c.onclick=()=>viewWeek('pre',i); }
+      chips.appendChild(c);
+    }
   } else {
-    for (let i=1;i<=TOTAL_WEEKS;i++) { const c=document.createElement('span'); c.className='week-chip '+(i<p.week?'done':i===p.week?'current':'upcoming'); c.textContent='W'+i; chips.appendChild(c); }
+    for (let i=1;i<=TOTAL_WEEKS;i++) {
+      const c=document.createElement('span');
+      const isCurrent = i===p.week && !_viewingWeek;
+      const isViewing = _viewingWeek && _viewingWeek.mode==='plan' && _viewingWeek.week===i;
+      c.className='week-chip '+(isViewing?'viewing':i<p.week?'done':isCurrent?'current':'upcoming');
+      c.textContent='W'+i;
+      if (i<=p.week) { c.style.cursor='pointer'; c.onclick=()=>viewWeek('plan',i); }
+      chips.appendChild(c);
+    }
   }
 
-  // Checklist
-  const mode = p.mode === 'pre' ? 'pre' : 'plan';
-  const week = p.mode === 'pre' ? p.week : p.week;
-  const schedule = p.mode === 'pre' ? PRETRAIN[Math.max(0,week-1)] : (p.mode === 'plan' ? SCHEDULE[week-1] : SCHEDULE[17]);
+  // Checklist for the week being viewed
+  const { mode, week } = viewing;
+  const schedule = mode === 'pre' ? PRETRAIN[Math.max(0,week-1)] : (mode === 'plan' ? SCHEDULE[week-1] : SCHEDULE[17]);
   const checks = loadChecks(mode, week);
 
-  document.getElementById('checklist-title').textContent = p.mode==='pre' ? `PRE-TRAINING WK ${week}` : `WEEK ${week}`;
-  document.getElementById('week-title').textContent = p.mode==='pre' ? formatDateRangePre(week) : formatDateRange(week);
-  document.getElementById('week-subtitle').textContent = p.mode==='pre' ? 'Base building — easy runs only' : `Hal Higdon Novice 1 · ${getPhase(week).phase}`;
+  const weekLabel = isPast ? `↩ WEEK ${week} — BACK-LOG` : (mode==='pre' ? `PRE-TRAINING WK ${week}` : `WEEK ${week}`);
+  document.getElementById('checklist-title').textContent = weekLabel;
+  document.getElementById('week-title').textContent = mode==='pre' ? formatDateRangePre(week) : formatDateRange(week);
+  document.getElementById('week-subtitle').textContent = mode==='pre' ? 'Base building — easy runs only' : `Hal Higdon Novice 1 · ${getPhase(week).phase}`;
+
+  // "Back to current week" pill when viewing a past week
+  const nudge = document.getElementById('long-run-nudge');
+  if (isPast) {
+    nudge.style.display = 'block';
+    nudge.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-family:'Press Start 2P',monospace;font-size:5px;color:var(--brown-light)">VIEWING PAST WEEK — LOG MISSED RUNS BELOW</div><button onclick="viewCurrentWeek()" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 8px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;white-space:nowrap">↩ BACK</button></div>`;
+  } else {
+    const longIdx = schedule ? schedule.findIndex(d => d.type==='long'||d.type==='race') : -1;
+    const dow = today().getDay();
+    if (longIdx !== -1 && !checks[longIdx] && (dow >= 4 || dow === 0)) {
+      const d = schedule[longIdx];
+      nudge.style.display = 'block';
+      nudge.innerHTML = `<div style="font-family:'Press Start 2P',monospace;font-size:6px;margin-bottom:5px">⚠️ ${dow===0?'LONG RUN DAY IS TODAY':'LONG RUN THIS WEEKEND'}</div><div style="font-size:12px;color:var(--brown-mid)">${d.km}km — block your ${dow===0?'today':'weekend'} now.</div>`;
+    } else {
+      nudge.style.display = 'none';
+    }
+  }
 
   let doneCount=0, checkable=0;
   const list = document.getElementById('checklist');
   list.innerHTML = '';
-  schedule.forEach((d,i) => {
+  if (schedule) schedule.forEach((d,i) => {
     const isRest = d.type==='rest';
     const isDone = !!checks[i];
     if (!isRest) { checkable++; if (isDone) doneCount++; }
@@ -741,7 +804,12 @@ function renderPlan() {
     if (!isRest) item.onclick = () => toggleCheck(i, mode, week);
     const lbl = dayLabel(d);
     const runLog = isDone ? getRunLog(mode, week, i) : null;
-    const kmLine = runLog?.km_actual ? `<div style="font-family:'Press Start 2P',monospace;font-size:6px;color:var(--green);margin-top:3px">✓ ${runLog.km_actual}km ${runLog.mood||''}</div>` : '';
+    const displayKm = runLog?.km_actual || (isDone && d.km ? d.km : null);
+    const kmLine = displayKm ? `<div style="font-family:'Press Start 2P',monospace;font-size:6px;color:var(--green);margin-top:3px">✓ ${displayKm}km ${runLog?.mood||''}</div>` : '';
+    // For past weeks, show a small "LOG" button on unlogged run days
+    const logBtnFn = d.type === 'cross' ? `openCrossModal(${i},'${mode}',${week},${JSON.stringify(d)})` : `openShiftedRunModal(${i},'${mode}',${week})`;
+    const logBtn = isPast && !isDone && !isRest
+      ? `<button onclick="event.stopPropagation();${logBtnFn}" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border:1px solid var(--terra);border-radius:3px;background:var(--terra-pale);color:var(--terra-dark);cursor:pointer;margin-left:4px;flex-shrink:0">LOG</button>` : '';
     item.innerHTML = `
       <div class="check-box">${isDone?'✓':isRest?'—':''}</div>
       <div class="check-content">
@@ -750,27 +818,15 @@ function renderPlan() {
         <div class="check-detail">${dayDetail(d, week)}</div>
         ${kmLine}
       </div>
-      <span class="check-badge ${lbl.cls}">${lbl.text}</span>`;
+      <span class="check-badge ${lbl.cls}">${lbl.text}</span>${logBtn}`;
     list.appendChild(item);
   });
 
   document.getElementById('done-pill').textContent = `${doneCount}/${checkable}`;
 
-  // nudge
-  const nudge = document.getElementById('long-run-nudge');
-  const longIdx = schedule.findIndex(d => d.type==='long'||d.type==='race');
-  const dow = today().getDay();
-  if (longIdx !== -1 && !checks[longIdx] && (dow >= 4 || dow === 0)) {
-    const d = schedule[longIdx];
-    nudge.style.display = 'block';
-    nudge.innerHTML = `<div style="font-family:'Press Start 2P',monospace;font-size:6px;margin-bottom:5px">⚠️ ${dow===0?'LONG RUN DAY IS TODAY':'LONG RUN THIS WEEKEND'}</div><div style="font-size:12px;color:var(--brown-mid)">${d.km}km — block your ${dow===0?'today':'weekend'} now.</div>`;
-  } else {
-    nudge.style.display = 'none';
-  }
-
   // streak row
   const streak = document.getElementById('streak-row');
-  const phase = p.mode==='plan' ? getPhase(week) : {animal:'🐢', phase:'PRE-TRAINING'};
+  const phase = p.mode==='plan' ? getPhase(p.week) : {animal:'🐢', phase:'PRE-TRAINING'};
   streak.innerHTML = `
     <div class="streak-pill"><span style="font-size:14px">${phase.animal}</span> ${phase.phase}</div>
     <div class="streak-pill">🎽 ${totalKmLogged()} KM TOTAL</div>
@@ -783,6 +839,8 @@ function renderPlan() {
 function toggleCheck(dayIdx, mode, week) {
   const checks = loadChecks(mode, week);
   if (checks[dayIdx]) {
+    // Already done — require confirmation before deleting
+    if (!confirm('Remove this logged run?')) return;
     checks[dayIdx] = false;
     saveChecks(mode, week, checks);
     deleteRun(mode, week, dayIdx).then(() => { renderPlan(); renderToday(); renderMiles(); });
@@ -793,7 +851,9 @@ function toggleCheck(dayIdx, mode, week) {
   renderPlan();
   const sch = mode==='pre' ? PRETRAIN : SCHEDULE;
   const day = sch[week-1]?.[dayIdx];
-  if (day && day.type !== 'rest' && day.type !== 'cross') {
+  if (day && day.type === 'cross') {
+    openCrossModal(dayIdx, mode, week, day);
+  } else if (day && day.type !== 'rest') {
     openModal(dayIdx, mode, week, day);
   } else {
     saveRun(mode, week, dayIdx, null, null, null, null).then(() => { renderToday(); renderMiles(); });
@@ -1126,6 +1186,56 @@ let _selectedConds = {};
 let _selectedSoreLocs = [];
 let _extraModal = false;
 
+function getUnloggedRunsThisWeek() {
+  const p = currentPeriod();
+  if (p.mode !== 'pre' && p.mode !== 'plan') return [];
+  const mode = p.mode === 'pre' ? 'pre' : 'plan';
+  const week = p.week;
+  const sch = mode === 'pre' ? PRETRAIN : SCHEDULE;
+  const days = sch[week-1] || [];
+  const results = [];
+  days.forEach((d, i) => {
+    if (d.type === 'rest' || d.type === 'cross') return;
+    if (!isRunLogged(mode, week, i)) results.push({ dayIdx: i, mode, week, day: d });
+  });
+  // Also offer last-week Sunday (day 6) on Mondays, in case they ran it today
+  const todayDow = today().getDay(); // 0=Sun, 1=Mon
+  if (todayDow === 1 && week > 1) {
+    const prevWeek = week - 1;
+    const prevSch = sch[prevWeek-1] || [];
+    const sundayDay = prevSch[6];
+    if (sundayDay && (sundayDay.type === 'long' || sundayDay.type === 'easy' || sundayDay.type === 'medium' || sundayDay.type === 'race') && !isRunLogged(mode, prevWeek, 6)) {
+      results.unshift({ dayIdx: 6, mode, week: prevWeek, day: sundayDay, label: 'Last week\'s SUN' });
+    }
+  }
+  return results;
+}
+
+function openShiftedRunModal(dayIdx, mode, week) {
+  const sch = mode === 'pre' ? PRETRAIN : SCHEDULE;
+  const day = sch[week-1]?.[dayIdx];
+  if (day) openModal(dayIdx, mode, week, day);
+}
+
+function openCrossModal(dayIdx, mode, week, day) {
+  _modalCtx = { dayIdx, mode, week, day };
+  _selectedMood = '';
+  _selectedConds = {};
+  _selectedSoreLocs = [];
+  _extraModal = false;
+  document.getElementById('modal-km').value = '';
+  document.getElementById('modal-km').placeholder = `Plan: ${day.min} min`;
+  document.getElementById('modal-notes').value = '';
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.cond-chip').forEach(b => b.classList.remove('selected','sore-selected'));
+  document.querySelectorAll('.loc-chip').forEach(b => b.classList.remove('selected'));
+  document.getElementById('soreness-row').className = 'soreness-row';
+  document.getElementById('modal-day-label').textContent = `${DAY_NAMES[dayIdx]} · Cross Training (${day.min} min)`;
+  document.getElementById('modal-km-label').textContent = 'ACTUAL MINUTES (optional)';
+  document.getElementById('modal-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-km').focus(), 100);
+}
+
 function openTodayRunModal() {
   const p = currentPeriod();
   const dayIdx = todayDayIdx();
@@ -1142,12 +1252,14 @@ function openModal(dayIdx, mode, week, day) {
   _selectedConds = {};
   _selectedSoreLocs = [];
   _extraModal = false;
-  document.getElementById('modal-km').value = day.km || '';
+  document.getElementById('modal-km').value = '';
+  document.getElementById('modal-km').placeholder = day.km ? `Plan: ${day.km} km — or enter yours` : 'e.g. 5.2';
   document.getElementById('modal-notes').value = '';
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
   document.querySelectorAll('.cond-chip').forEach(b => b.classList.remove('selected','sore-selected'));
   document.querySelectorAll('.loc-chip').forEach(b => b.classList.remove('selected'));
   document.getElementById('soreness-row').className = 'soreness-row';
+  document.getElementById('modal-km-label').textContent = 'ACTUAL KM RUN';
   document.getElementById('modal-day-label').textContent = `${DAY_NAMES[dayIdx]} · ${dayName(day)}`;
   document.getElementById('modal-overlay').style.display = 'flex';
   setTimeout(() => document.getElementById('modal-km').focus(), 100);
@@ -1170,12 +1282,14 @@ function openExtraModal() {
   setTimeout(() => document.getElementById('modal-km').focus(), 100);
 }
 
-function closeModal() {
+function cancelModal() {
   document.getElementById('modal-overlay').style.display = 'none';
-  if (!_extraModal && _modalCtx.dayIdx !== undefined) {
-    saveRun(_modalCtx.mode, _modalCtx.week, _modalCtx.dayIdx, null, null, null, null).then(() => { renderToday(); renderMiles(); renderExtraRuns(); });
-  }
   _modalCtx = {};
+  _extraModal = false;
+}
+
+function closeModal() {
+  cancelModal();
 }
 
 function selectMood(btn) {
@@ -1223,6 +1337,8 @@ function toggleSoreLoc(btn) {
 async function submitRun() {
   const km = parseFloat(document.getElementById('modal-km').value) || null;
   const notes = document.getElementById('modal-notes').value.trim() || null;
+  const loc = LOCATIONS[currentLocIdx];
+  if (loc) _selectedConds.location = loc.name;
   const conditions = Object.keys(_selectedConds).length ? _selectedConds : null;
   document.getElementById('modal-overlay').style.display = 'none';
 
@@ -1239,7 +1355,7 @@ async function submitRun() {
   _modalCtx = {};
 }
 
-document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
+document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target===this) cancelModal(); });
 document.getElementById('loc-overlay').addEventListener('click', function(e) { if (e.target===this) closeLocPicker(); });
 document.getElementById('stretch-overlay').addEventListener('click', function(e) { if (e.target===this) closeStretch(); });
 
